@@ -27,6 +27,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  // Check if user is actually a mentor
+  const { data: profile } = await db
+    .from('profiles')
+    .select('role')
+    .eq('id', session.user.id)
+    .single();
+
+  if (!profile || profile.role !== 'mentor') {
+    alert('Access denied. Only mentors can access this dashboard.');
+    window.location.href = '../member2/index.html'; // Redirect students to their dashboard
+    return;
+  }
+
   // Set mentor name from session
   const name = session.user.user_metadata?.name || session.user.email || 'Mentor';
   const el   = document.querySelector('.mentor-name');
@@ -375,46 +388,7 @@ async function submitFeedback() {
 }
 window.submitFeedback = submitFeedback;
 
-/* ── Student project submission (from student side) ─────────── */
-async function handleStudentSubmit() {
-  const { data: { session } } = await db.auth.getSession();
-  if (!session) { showToast('Please log in first', 'error'); return; }
 
-  const github = document.querySelector('#page-submit-project input[type="url"]')?.value?.trim();
-  if (!github) { showToast('Please enter at least a GitHub URL', 'error'); return; }
-
-  const title   = document.querySelector('#page-submit-project input[type="text"]:last-of-type')?.value?.trim();
-  const desc    = document.querySelector('#page-submit-project textarea')?.value?.trim();
-
-  // Get user's profile to find their track_id and current module
-  const { data: profile } = await db.from('profiles').select('track_id').eq('id', session.user.id).single();
-  if (!profile?.track_id) { showToast('Complete onboarding first', 'error'); return; }
-
-  // Find the first module for simplicity (student would pick in a real form)
-  const { data: firstModule } = await db.from('modules').select('id').eq('track_id', profile.track_id).order('order').limit(1).single();
-
-  const { error } = await db.from('submissions').insert({
-    user_id:       session.user.id,
-    module_id:     firstModule?.id,
-    project_title: title || 'My Project',
-    github_url:    github,
-    description:   desc,
-    status:        'pending',
-  });
-
-  if (error) { showToast('Error submitting: ' + error.message, 'error'); return; }
-
-  showToast('Project submitted for review! 🎉', 'success');
-}
-window.handleStudentSubmit = handleStudentSubmit;
-
-/* ── File selection (UI only) ────────────────────────────────── */
-window.handleFileSelect = function(input) {
-  const list = document.getElementById('file-list');
-  list.innerHTML = Array.from(input.files)
-    .map(f => `<div class="file-tag"><i class="ti ti-file"></i> ${esc(f.name)}</div>`)
-    .join('');
-};
 
 /* ── Star rating system ──────────────────────────────────────── */
 function initStars() {

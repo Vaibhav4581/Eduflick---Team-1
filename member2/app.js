@@ -728,3 +728,51 @@ function fmtDate(iso) {
   if (!iso) return '';
   return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PROJECT SUBMISSION
+══════════════════════════════════════════════════════════════ */
+window.handleStudentSubmit = async function() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { showToast('Please log in first', 'error'); return; }
+
+  const github = document.getElementById('submit-github')?.value?.trim();
+  if (!github) { showToast('Please enter at least a GitHub URL', 'error'); return; }
+
+  const title   = document.getElementById('submit-title')?.value?.trim();
+  const desc    = document.getElementById('submit-desc')?.value?.trim();
+
+  // Get user's profile to find their track_id
+  const { data: profile } = await db.from('profiles').select('track_id').eq('id', session.user.id).single();
+  if (!profile?.track_id) { showToast('Complete onboarding first', 'error'); return; }
+
+  const moduleId = document.getElementById('submit-module')?.value;
+
+  const { error } = await db.from('submissions').insert({
+    user_id:       session.user.id,
+    module_id:     moduleId,
+    project_title: title || 'My Project',
+    github_url:    github,
+    description:   desc,
+    status:        'pending',
+  });
+
+  if (error) { showToast('Error submitting: ' + error.message, 'error'); return; }
+
+  showToast('Project submitted for review! 🎉', 'success');
+  
+  // Clear form
+  document.getElementById('submit-title').value = '';
+  document.getElementById('submit-github').value = '';
+  document.getElementById('submit-portfolio').value = '';
+  document.getElementById('submit-desc').value = '';
+  document.getElementById('file-list').innerHTML = '';
+};
+
+/* ── File selection (UI only) ────────────────────────────────── */
+window.handleFileSelect = function(input) {
+  const list = document.getElementById('file-list');
+  list.innerHTML = Array.from(input.files)
+    .map(f => `<div class="file-tag"><span>📄</span> ${esc(f.name)}</div>`)
+    .join('');
+};
