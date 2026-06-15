@@ -98,14 +98,14 @@ ALTER TABLE lesson_progress    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assessment_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_progress      ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users see own lesson progress"
-  ON lesson_progress FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Public access to lesson progress"
+  ON lesson_progress FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Users see own assessment results"
-  ON assessment_results FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Public access to assessment results"
+  ON assessment_results FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Users see own progress"
-  ON user_progress FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Public access to user progress"
+  ON user_progress FOR ALL USING (true) WITH CHECK (true);
 
 -- Public read on content tables
 CREATE POLICY "Public read tracks"    ON tracks    FOR SELECT USING (true);

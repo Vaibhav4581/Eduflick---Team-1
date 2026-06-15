@@ -1,0 +1,768 @@
+/* ============================================================
+   EduFlick AI — shared styles
+   Palette: near-black surfaces, violet accent, off-white text
+   Display: Space Grotesk · Body: Inter · Utility: JetBrains Mono
+   ============================================================ */
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #15151C;
+  --surface-raised: #1E1E29;
+  --surface-hover: #25252F;
+  --border: #2A2A38;
+  --border-soft: #1F1F2A;
+
+  --violet: #8B5CF6;
+  --violet-bright: #B794F6;
+  --violet-deep: #3F2A78;
+  --violet-glow: rgba(139, 92, 246, 0.35);
+
+  --ink: #F5F4FA;
+  --ink-muted: #8E8EA3;
+  --ink-faint: #5C5C70;
+  --white: #FFFFFF;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --container: 1040px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Reset so <button> cards (.option-card, .lesson-node) inherit the
+   page's type instead of the browser's default button font/color. */
+button, input {
+  font-family: inherit;
+  color: inherit;
+}
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, var(--violet-deep) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(139,92,246,0.12) 0%, transparent 55%);
+  background-repeat: no-repeat;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--violet-bright);
+  text-decoration: none;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ------------------------------------------------------------
+   Header / wordmark
+   ------------------------------------------------------------ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 0;
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.wordmark__mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--violet) 0%, var(--violet-deep) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+}
+
+.wordmark__ai {
+  color: var(--violet-bright);
+}
+
+.topbar__meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pill {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: var(--surface);
+}
+
+.pill--violet {
+  color: var(--violet-bright);
+  border-color: rgba(139,92,246,0.4);
+  background: rgba(139,92,246,0.08);
+}
+
+/* ------------------------------------------------------------
+   Buttons
+   ------------------------------------------------------------ */
+.btn {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  padding: 13px 24px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--violet-bright);
+  outline-offset: 2px;
+}
+
+.btn--primary {
+  background: var(--violet);
+  color: var(--white);
+  box-shadow: 0 8px 24px -8px var(--violet-glow);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: #9D6BFA;
+  transform: translateY(-1px);
+}
+
+.btn--primary:disabled {
+  background: var(--surface-raised);
+  color: var(--ink-faint);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink-muted);
+  border-color: var(--border);
+}
+
+.btn--ghost:hover {
+  color: var(--ink);
+  border-color: var(--ink-muted);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* ------------------------------------------------------------
+   Stepper (used on auth / track-selection / mentor-selection)
+   This is the "pathway" pattern in miniature — same visual
+   language as the roadmap, so the onboarding flow literally
+   previews the mechanic the student will use throughout.
+   ------------------------------------------------------------ */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 auto 40px;
+}
+
+.stepper__node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.stepper__circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  color: var(--ink-faint);
+  background: var(--surface);
+}
+
+.stepper__label {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+.stepper__connector {
+  width: 64px;
+  height: 1.5px;
+  background: var(--border);
+  margin: 0 6px;
+  transform: translateY(-12px);
+}
+
+.stepper__node--done .stepper__circle {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: var(--white);
+}
+
+.stepper__node--done .stepper__label,
+.stepper__node--active .stepper__label {
+  color: var(--ink-muted);
+}
+
+.stepper__node--active .stepper__circle {
+  border-color: var(--violet-bright);
+  color: var(--violet-bright);
+  box-shadow: 0 0 0 4px var(--violet-glow);
+}
+
+.stepper__connector--done {
+  background: var(--violet);
+}
+
+/* ------------------------------------------------------------
+   Auth card
+   ------------------------------------------------------------ */
+.auth-wrap {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 36px;
+}
+
+.auth-card__heading {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.auth-card__heading h1 {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.tabs {
+  display: flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+}
+
+.tab--active {
+  background: var(--violet);
+  color: var(--white);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.field input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  width: 100%;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px var(--violet-glow);
+}
+
+.form-message {
+  font-size: 13px;
+  margin-top: 14px;
+  text-align: center;
+  min-height: 18px;
+}
+
+.form-message--error {
+  color: #F2A6A6;
+}
+
+.form-message--ok {
+  color: var(--violet-bright);
+}
+
+/* ------------------------------------------------------------
+   Selection screens (track / mentor)
+   ------------------------------------------------------------ */
+.page-head {
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto 36px;
+}
+
+.page-head h1 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--violet-bright);
+  margin: 32px 0 14px;
+}
+
+.section-label:first-of-type {
+  margin-top: 0;
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.option-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  text-align: left;
+}
+
+.option-card:hover {
+  border-color: var(--ink-faint);
+  transform: translateY(-2px);
+}
+
+.option-card--selected {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px var(--violet-glow);
+}
+
+.option-card h3 {
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.option-card p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.option-card__badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  padding: 3px 9px;
+  margin-bottom: 10px;
+}
+
+.mentor-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.mentor-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--violet-deep);
+  color: var(--violet-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.actions-bar {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+/* ------------------------------------------------------------
+   Roadmap pathway — signature element
+   ------------------------------------------------------------ */
+.pathway {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-left: 28px;
+}
+
+.pathway::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--violet-deep), var(--border) 90%);
+}
+
+.module-block {
+  position: relative;
+  margin-bottom: 34px;
+}
+
+.module-node {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.module-node__dot {
+  position: absolute;
+  left: -28px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--violet);
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--violet);
+}
+
+.module-node h2 {
+  font-size: 17px;
+}
+
+.module-node__meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lesson-node {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  position: relative;
+  text-align: left;
+  width: 100%;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.lesson-node::before {
+  content: "";
+  position: absolute;
+  left: -22px;
+  width: 10px;
+  height: 1.5px;
+  background: var(--border);
+  top: 50%;
+}
+
+.lesson-node__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  border: 1.5px solid var(--border);
+  color: var(--ink-faint);
+}
+
+.lesson-node__title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.lesson-node__status {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* locked */
+.lesson-node--locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.lesson-node--locked .lesson-node__icon {
+  border-style: dashed;
+}
+
+/* unlocked / current */
+.lesson-node--unlocked {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px var(--violet-glow);
+  animation: pulse-glow 2.6s ease-in-out infinite;
+}
+
+.lesson-node--unlocked .lesson-node__icon {
+  border-color: var(--violet);
+  color: var(--violet-bright);
+}
+
+.lesson-node--unlocked .lesson-node__status {
+  color: var(--violet-bright);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 3px var(--violet-glow); }
+  50% { box-shadow: 0 0 0 6px transparent; }
+}
+
+/* completed */
+.lesson-node--completed .lesson-node__icon {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: var(--white);
+}
+
+.lesson-node--completed .lesson-node__status {
+  color: var(--ink-faint);
+}
+
+/* ------------------------------------------------------------
+   Lesson detail panel (modal)
+   ------------------------------------------------------------ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,5,8,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+
+.overlay[hidden] {
+  display: none;
+}
+
+.panel {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  max-width: 420px;
+  width: 100%;
+  padding: 30px;
+}
+
+.panel__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--violet-bright);
+  margin-bottom: 8px;
+}
+
+.panel h2 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.panel p {
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.panel__actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ------------------------------------------------------------
+   Misc
+   ------------------------------------------------------------ */
+.center-note {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 13px;
+  margin-top: 18px;
+}
+
+.loading-state {
+  text-align: center;
+  color: var(--ink-faint);
+  padding: 60px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+.progress-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  max-width: 640px;
+  margin: 0 auto 36px;
+}
+
+.progress-summary__track {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.progress-summary__bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-summary__fill {
+  height: 100%;
+  background: var(--violet);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.progress-summary__pct {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--violet-bright);
+  white-space: nowrap;
+  margin-left: 20px;
+}
+
+@media (max-width: 640px) {
+  .stepper__connector {
+    width: 32px;
+  }
+  .panel {
+    padding: 22px;
+  }
+}

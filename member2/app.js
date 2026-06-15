@@ -1,160 +1,60 @@
 // ================================================================
-//  EduFlick AI LMS — app.js  (Member 2)
-//  #4 Progress Tracking  ·  #5 Assessment Automation  ·  #6 Module Progression
+//  EduFlick AI LMS — member2/app.js
+//  #4 Progress Tracking · #5 Assessment Automation · #6 Module Progression
 //
-//  DEMO MODE: All data is embedded below — no Supabase schema required.
-//  LIVE MODE: Connects to real Supabase when user has a valid session.
+//  Uses the unified Supabase schema (04_unified_schema.sql).
+//  Auth is handled by Member 1's login flow — this page requires
+//  a real Supabase session (no dummy login).
 // ================================================================
 
 /* ── Supabase client ─────────────────────────────────────────── */
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const LOGIN_PAGE_URL = '../index.html';
+const LOGIN_PAGE_URL = '../member1/login.html';
 
-/* ══════════════════════════════════════════════════════════════
-   EMBEDDED DEMO DATA
-   All modules, lessons, assessments, and questions are here.
-   Demo mode uses this — no Supabase tables needed.
-══════════════════════════════════════════════════════════════ */
-const DEMO_TRACK = {
-  id:    'aaaaaaaa-0000-0000-0000-000000000001',
-  title: 'AI Foundations',
-  description: 'Master the core concepts of Artificial Intelligence'
+/* ── Static lesson content (keyed by lesson title) ───────────── */
+const LESSON_CONTENT = {
+  'What is Artificial Intelligence?':
+    `<h4>What is Artificial Intelligence?</h4><p>AI refers to the simulation of human intelligence in machines programmed to think and learn. It encompasses problem solving, language understanding, pattern recognition, and decision making.</p><br/><p><strong>Key branches of AI:</strong></p><ul style="margin:.5rem 0 0 1.2rem;color:#94a3b8;"><li>Machine Learning</li><li>Natural Language Processing</li><li>Computer Vision</li><li>Robotics</li></ul>`,
+  'How Machine Learning Models Learn':
+    `<h4>How Machine Learning Models Learn</h4><p>Machine Learning models learn by finding patterns in data. During training, they adjust internal parameters (weights) to minimise a loss function — essentially getting better at predicting the right answer.</p><br/><p><strong>Key concepts:</strong> Training data, loss function, gradient descent, epochs, overfitting vs underfitting.</p>`,
+  'Neural Networks Explained':
+    `<h4>Neural Networks Explained</h4><p>A neural network is a series of connected layers of nodes (neurons), inspired by the human brain. Each neuron takes weighted inputs, applies an activation function, and passes the result forward.</p><br/><p><strong>Layers:</strong> Input layer → Hidden layers → Output layer. The depth of hidden layers is what makes a network "deep".</p>`,
+  'Prompting Fundamentals':
+    `<h4>Prompting Fundamentals</h4><p>A prompt is the instruction you give to an AI model. The quality of your prompt directly affects the quality of the output. Good prompts are specific, provide context, and define the expected format.</p><br/><p><strong>Key techniques:</strong> Zero-shot, Few-shot, Chain-of-thought, System prompts.</p>`,
+  'Using AI APIs':
+    `<h4>Using AI APIs</h4><p>An API (Application Programming Interface) lets your code communicate with an AI service. You send a request (with your prompt and parameters) and receive a response (the model's output) over HTTP.</p><br/><p><strong>Key parameters:</strong> model, messages, temperature, max_tokens. Always store your API key securely.</p>`,
+  'Evaluating AI Outputs':
+    `<h4>Evaluating AI Outputs</h4><p>Never blindly trust AI responses. Always evaluate outputs for accuracy, relevance, bias, and potential hallucinations by cross-referencing reliable sources.</p><br/><p><strong>Metrics to consider:</strong> Accuracy, Faithfulness, Completeness, Coherence.</p>`,
+  'Capstone Brief & Planning':
+    `<h4>Capstone Brief & Planning</h4><p>Your capstone is a chance to apply everything you have learned. Start by defining a clear problem, scoping it appropriately, and planning your approach before writing any code.</p>`,
+  'Build Your First AI Mini-Project':
+    `<h4>Build Your First AI Mini-Project</h4><p>Apply your skills to build a working prototype. Focus on solving the scoped problem — don't over-engineer. Iterate quickly, test with real inputs, and document as you go.</p>`,
+  'Present & Reflect':
+    `<h4>Present & Reflect</h4><p>Presenting your work is as important as building it. Explain the problem you solved, the approach you took, the results, and what you would do differently next time.</p>`,
+  'Prompt Patterns for Content':
+    `<h4>Prompt Patterns for Content</h4><p>Effective content prompts define the audience, tone, format, and length. Use role-based prompts ("Act as a marketing copywriter…") to steer the AI towards the right voice.</p>`,
+  'Tone, Voice & Brand Consistency':
+    `<h4>Tone, Voice & Brand Consistency</h4><p>Brand voice is how a company sounds across all content. Use AI to maintain that voice by providing style guides and examples in your prompts. Always review and refine before publishing.</p>`,
+  'Editing AI-Generated Drafts':
+    `<h4>Editing AI-Generated Drafts</h4><p>AI drafts are a starting point, not a final product. Fact-check claims, improve clarity, remove repetition, and ensure the content reflects your brand. Think of AI as a fast first drafter.</p>`,
+  'What Makes an Agent "Agentic"?':
+    `<h4>What Makes an Agent "Agentic"?</h4><p>An AI agent can take a sequence of actions autonomously to achieve a goal. Unlike a simple chatbot, agents can use tools, remember context, plan ahead, and adapt based on feedback.</p>`,
+  'Tools, Memory & Planning':
+    `<h4>Tools, Memory & Planning</h4><p>Agents use <strong>tools</strong> (APIs, code execution, search) to interact with the world. <strong>Memory</strong> (conversation history, vector stores) lets them retain context. <strong>Planning</strong> breaks complex goals into steps.</p>`,
+  'Agent Architectures Overview':
+    `<h4>Agent Architectures Overview</h4><p>Common agent patterns include: ReAct (reason + act loop), Tool-calling agents, Multi-agent systems where specialised agents collaborate, and Hierarchical agents with a planning layer.</p>`,
 };
-
-const DEMO_MODULES = [
-  {
-    id: 'mod-001', order_index: 1, passing_score: 70,
-    title: 'Introduction to AI',
-    description: 'What is AI, history and key concepts',
-    lessons: [
-      { id: 'les-001-1', title: 'What is Artificial Intelligence?', order_index: 1 },
-      { id: 'les-001-2', title: 'History of AI',                   order_index: 2 },
-      { id: 'les-001-3', title: 'Types of AI Systems',             order_index: 3 }
-    ],
-    assessments: [{
-      id: 'asmnt-001', title: 'Intro to AI — Assessment',
-      assessment_questions: [
-        { id: 'q-001-1', order_index: 1, question_text: 'What does AI stand for?',
-          options: [{label:'A',text:'Automated Intelligence'},{label:'B',text:'Artificial Intelligence'},{label:'C',text:'Advanced Interface'},{label:'D',text:'Analytic Inference'}],
-          correct_option: 'B' },
-        { id: 'q-001-2', order_index: 2, question_text: 'Which of the following is a type of AI?',
-          options: [{label:'A',text:'Narrow AI'},{label:'B',text:'Broad AI'},{label:'C',text:'Static AI'},{label:'D',text:'Linear AI'}],
-          correct_option: 'A' },
-        { id: 'q-001-3', order_index: 3, question_text: 'Who coined the term "Artificial Intelligence"?',
-          options: [{label:'A',text:'Alan Turing'},{label:'B',text:'John McCarthy'},{label:'C',text:'Geoffrey Hinton'},{label:'D',text:'Yann LeCun'}],
-          correct_option: 'B' },
-        { id: 'q-001-4', order_index: 4, question_text: 'The Turing Test evaluates a machine\'s ability to exhibit:',
-          options: [{label:'A',text:'Speed'},{label:'B',text:'Memory'},{label:'C',text:'Intelligent behavior'},{label:'D',text:'Physical movement'}],
-          correct_option: 'C' },
-        { id: 'q-001-5', order_index: 5, question_text: 'Which year was the term Artificial Intelligence coined?',
-          options: [{label:'A',text:'1950'},{label:'B',text:'1960'},{label:'C',text:'1956'},{label:'D',text:'1970'}],
-          correct_option: 'C' }
-      ]
-    }]
-  },
-  {
-    id: 'mod-002', order_index: 2, passing_score: 75,
-    title: 'Machine Learning Basics',
-    description: 'Supervised, unsupervised, reinforcement learning',
-    lessons: [
-      { id: 'les-002-1', title: 'Supervised Learning',   order_index: 1 },
-      { id: 'les-002-2', title: 'Unsupervised Learning', order_index: 2 },
-      { id: 'les-002-3', title: 'Model Evaluation',      order_index: 3 }
-    ],
-    assessments: [{
-      id: 'asmnt-002', title: 'ML Basics — Assessment',
-      assessment_questions: [
-        { id: 'q-002-1', order_index: 1, question_text: 'Supervised learning requires:',
-          options: [{label:'A',text:'Labeled data'},{label:'B',text:'Unlabeled data'},{label:'C',text:'No data'},{label:'D',text:'Reinforcement signals only'}],
-          correct_option: 'A' },
-        { id: 'q-002-2', order_index: 2, question_text: 'Which algorithm is commonly used for classification?',
-          options: [{label:'A',text:'K-Means'},{label:'B',text:'Linear Regression'},{label:'C',text:'Decision Tree'},{label:'D',text:'PCA'}],
-          correct_option: 'C' },
-        { id: 'q-002-3', order_index: 3, question_text: 'Overfitting occurs when a model:',
-          options: [{label:'A',text:'Performs well on training data but poorly on test data'},{label:'B',text:'Performs poorly on training data'},{label:'C',text:'Is too simple'},{label:'D',text:'Has fewer parameters'}],
-          correct_option: 'A' },
-        { id: 'q-002-4', order_index: 4, question_text: 'Unsupervised learning groups data by:',
-          options: [{label:'A',text:'Predefined labels'},{label:'B',text:'Finding hidden patterns'},{label:'C',text:'Human annotation'},{label:'D',text:'Reward signals'}],
-          correct_option: 'B' },
-        { id: 'q-002-5', order_index: 5, question_text: 'Which metric evaluates a classifier\'s performance?',
-          options: [{label:'A',text:'RMSE'},{label:'B',text:'Accuracy'},{label:'C',text:'R-squared'},{label:'D',text:'MAE'}],
-          correct_option: 'B' }
-      ]
-    }]
-  },
-  {
-    id: 'mod-003', order_index: 3, passing_score: 80,
-    title: 'Neural Networks',
-    description: 'Perceptrons, layers, backpropagation',
-    lessons: [
-      { id: 'les-003-1', title: 'Perceptrons & Neurons', order_index: 1 },
-      { id: 'les-003-2', title: 'Deep Learning Layers',  order_index: 2 },
-      { id: 'les-003-3', title: 'Backpropagation',       order_index: 3 }
-    ],
-    assessments: [{
-      id: 'asmnt-003', title: 'Neural Networks — Assessment',
-      assessment_questions: [
-        { id: 'q-003-1', order_index: 1, question_text: 'A perceptron is inspired by:',
-          options: [{label:'A',text:'Computer circuits'},{label:'B',text:'Human neurons'},{label:'C',text:'Database records'},{label:'D',text:'Statistical models'}],
-          correct_option: 'B' },
-        { id: 'q-003-2', order_index: 2, question_text: 'Backpropagation is used to:',
-          options: [{label:'A',text:'Forward pass data'},{label:'B',text:'Update weights by computing gradients'},{label:'C',text:'Load training data'},{label:'D',text:'Normalize inputs'}],
-          correct_option: 'B' },
-        { id: 'q-003-3', order_index: 3, question_text: 'Deep Learning is a subset of:',
-          options: [{label:'A',text:'Database management'},{label:'B',text:'Machine Learning'},{label:'C',text:'Operating systems'},{label:'D',text:'Networking'}],
-          correct_option: 'B' },
-        { id: 'q-003-4', order_index: 4, question_text: 'Activation functions introduce:',
-          options: [{label:'A',text:'Linearity'},{label:'B',text:'Non-linearity'},{label:'C',text:'Normalization'},{label:'D',text:'Regularization'}],
-          correct_option: 'B' },
-        { id: 'q-003-5', order_index: 5, question_text: 'Which activation function outputs values between 0 and 1?',
-          options: [{label:'A',text:'ReLU'},{label:'B',text:'Tanh'},{label:'C',text:'Sigmoid'},{label:'D',text:'Linear'}],
-          correct_option: 'C' }
-      ]
-    }]
-  },
-  {
-    id: 'mod-004', order_index: 4, passing_score: 70,
-    title: 'Prompt Engineering',
-    description: 'Craft effective prompts for LLMs',
-    lessons: [
-      { id: 'les-004-1', title: 'Anatomy of a Prompt', order_index: 1 },
-      { id: 'les-004-2', title: 'Chain-of-Thought',    order_index: 2 },
-      { id: 'les-004-3', title: 'Few-Shot Prompting',  order_index: 3 }
-    ],
-    assessments: [{
-      id: 'asmnt-004', title: 'Prompt Engineering — Assessment',
-      assessment_questions: [
-        { id: 'q-004-1', order_index: 1, question_text: 'Chain-of-Thought prompting helps LLMs:',
-          options: [{label:'A',text:'Generate images'},{label:'B',text:'Reason step by step'},{label:'C',text:'Reduce token count'},{label:'D',text:'Speed up inference'}],
-          correct_option: 'B' },
-        { id: 'q-004-2', order_index: 2, question_text: 'Few-Shot prompting involves:',
-          options: [{label:'A',text:'No examples'},{label:'B',text:'One example'},{label:'C',text:'Multiple examples in the prompt'},{label:'D',text:'Fine-tuning the model'}],
-          correct_option: 'C' },
-        { id: 'q-004-3', order_index: 3, question_text: 'A system prompt defines:',
-          options: [{label:'A',text:"The user's name"},{label:'B',text:"The model's behavior and persona"},{label:'C',text:'Output format only'},{label:'D',text:'Training data'}],
-          correct_option: 'B' },
-        { id: 'q-004-4', order_index: 4, question_text: 'Zero-Shot prompting means:',
-          options: [{label:'A',text:'Providing many examples'},{label:'B',text:'No examples given to the model'},{label:'C',text:'Fine-tuning with no data'},{label:'D',text:'Using zero temperature'}],
-          correct_option: 'B' },
-        { id: 'q-004-5', order_index: 5, question_text: 'Temperature in LLMs controls:',
-          options: [{label:'A',text:'Processing speed'},{label:'B',text:'Memory usage'},{label:'C',text:'Randomness of output'},{label:'D',text:'Token limit'}],
-          correct_option: 'C' }
-      ]
-    }]
-  }
-];
 
 /* ══════════════════════════════════════════════════════════════
    APP STATE
 ══════════════════════════════════════════════════════════════ */
 let currentUser       = null;
-let isDemoMode        = false;
-let trackData         = null;       // { track, modules }
-let userProgress      = null;       // aggregate stats row
-let lessonProgress    = {};         // { lesson_id: true } ← #4 Progress Tracking
-let assessmentResults = {};         // { assessment_id: [result,...] } ← #5 Assessment Automation
+let trackData         = null;       // { track, modules[] }
+let userProgress      = null;       // aggregate progress row
+let lessonProgress    = {};         // { lesson_id: { is_unlocked, is_completed } }
+let assessmentResults = {};         // { assessment_id: [result, ...] }
 
 // Quiz state
 let currentAssessment  = null;
@@ -170,35 +70,26 @@ let currentLessonId = null;
    INIT
 ══════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Demo mode — dummy login button sets this in sessionStorage
-  const demoUser = getDemoUser();
-  if (demoUser) {
-    isDemoMode = true;
-    await boot(demoUser);
-    document.getElementById('signout-btn').addEventListener('click', () => {
-      sessionStorage.removeItem('ef_demo_user');
-      window.location.href = LOGIN_PAGE_URL;
-    });
+  // Check for a real Supabase Auth session
+  const { data: { session } } = await db.auth.getSession();
+
+  if (!session) {
+    window.location.href = LOGIN_PAGE_URL;
     return;
   }
 
-  // 2. Real Supabase session
-  const { data: { session } } = await db.auth.getSession();
-  if (!session) { window.location.href = LOGIN_PAGE_URL; return; }
-
   await boot(session.user);
+
+  // Keep watching for sign-out
   db.auth.onAuthStateChange((_event, session) => {
     if (!session) window.location.href = LOGIN_PAGE_URL;
   });
+
   document.getElementById('signout-btn').addEventListener('click', async () => {
     await db.auth.signOut();
     window.location.href = LOGIN_PAGE_URL;
   });
 });
-
-function getDemoUser() {
-  try { return JSON.parse(sessionStorage.getItem('ef_demo_user') || 'null'); } catch { return null; }
-}
 
 /* ══════════════════════════════════════════════════════════════
    BOOT
@@ -217,7 +108,7 @@ function hideSplash() {
 }
 
 function renderUserInfo() {
-  const name     = currentUser?.user_metadata?.full_name || currentUser?.email || 'Demo Student';
+  const name     = currentUser?.user_metadata?.name || currentUser?.email || 'Student';
   const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   document.getElementById('user-name-display').textContent = name.split(' ')[0];
   document.getElementById('user-avatar').textContent       = initials;
@@ -225,157 +116,171 @@ function renderUserInfo() {
 
 /* ══════════════════════════════════════════════════════════════
    DATA LOADING
-   Demo mode → uses embedded DEMO_MODULES data (instant, no network)
-   Live mode → fetches from Supabase
+   All data comes from the unified Supabase schema.
 ══════════════════════════════════════════════════════════════ */
 async function loadAllData() {
-  if (isDemoMode) {
-    // Use embedded data — fully offline, no Supabase needed
-    trackData = { track: DEMO_TRACK, modules: DEMO_MODULES };
-    lessonProgress    = {};
-    assessmentResults = {};
-    userProgress      = null;
-  } else {
-    await Promise.all([
-      loadTrackData(),
-      loadUserProgress(),
-      loadLessonProgress(),
-      loadAssessmentResults()
-    ]);
-  }
+  await Promise.all([
+    loadTrackData(),
+    loadLessonProgress(),
+    loadAssessmentResults(),
+    loadUserProgress(),
+  ]);
   renderRoadmap();
   renderProgressView();
   updateProgressStats();
 }
 
-/* ── Live mode loaders ──────────────────────────────────────── */
 async function loadTrackData() {
-  const { data: track } = await db
-    .from('tracks').select('*').eq('id', DEFAULT_TRACK_ID).single();
+  // Get user's profile to find their track_id
+  const { data: profile, error: pErr } = await db
+    .from('profiles')
+    .select('track_id, tracks(id, name, description)')
+    .eq('id', currentUser.id)
+    .single();
 
-  const { data: modules } = await db
-    .from('modules')
-    .select(`*, lessons (id, title, order_index),
-      assessments (id, title, description,
-        assessment_questions (id, question_text, options, correct_option, order_index))`)
-    .eq('track_id', DEFAULT_TRACK_ID)
-    .order('order_index');
-
-  if (modules) {
-    modules.forEach(m => {
-      m.lessons?.sort((a, b) => a.order_index - b.order_index);
-      m.assessments?.[0]?.assessment_questions?.sort((a, b) => a.order_index - b.order_index);
-    });
+  if (pErr || !profile?.track_id) {
+    // Not onboarded yet — send them to pick a track
+    window.location.href = '../member1/track-selection.html';
+    return;
   }
-  trackData = { track, modules: modules || [] };
-}
 
-async function loadUserProgress() {
-  const { data } = await db.from('user_progress').select('*').eq('user_id', currentUser.id).single();
-  userProgress = data;
+  // Load modules + nested lessons + nested assessments for their track
+  const { data: modules, error: mErr } = await db
+    .from('modules')
+    .select(`
+      id, title, description, passing_score,
+      order,
+      lessons(id, title, order),
+      assessments(id, title,
+        assessment_questions(id, question_text, options, correct_option, order)
+      )
+    `)
+    .eq('track_id', profile.track_id)
+    .order('order');
+
+  if (mErr) { console.error('loadTrackData error:', mErr.message); return; }
+
+  // Sort lessons and questions by order
+  (modules || []).forEach(m => {
+    (m.lessons || []).sort((a, b) => a.order - b.order);
+    const assessment = Array.isArray(m.assessments) ? m.assessments[0] : m.assessments;
+    if (assessment) {
+      (assessment.assessment_questions || []).sort((a, b) => a.order - b.order);
+    }
+  });
+
+  trackData = {
+    track:   { id: profile.track_id, ...profile.tracks },
+    modules: modules || [],
+  };
 }
 
 async function loadLessonProgress() {
-  const { data } = await db.from('lesson_progress').select('lesson_id, completed').eq('user_id', currentUser.id);
-  lessonProgress = {};
-  (data || []).forEach(lp => { if (lp.completed) lessonProgress[lp.lesson_id] = true; });
-}
+  const { data, error } = await db
+    .from('lesson_progress')
+    .select('lesson_id, is_unlocked, is_completed, completed_at')
+    .eq('user_id', currentUser.id);
 
-async function loadAssessmentResults() {
-  const { data } = await db.from('assessment_results').select('*')
-    .eq('user_id', currentUser.id).order('submitted_at', { ascending: false });
-  assessmentResults = {};
-  (data || []).forEach(r => {
-    if (!assessmentResults[r.assessment_id]) assessmentResults[r.assessment_id] = [];
-    assessmentResults[r.assessment_id].push(r);
+  if (error) { console.error('loadLessonProgress error:', error.message); return; }
+
+  lessonProgress = {};
+  (data || []).forEach(row => {
+    lessonProgress[row.lesson_id] = {
+      is_unlocked:  row.is_unlocked,
+      is_completed: row.is_completed,
+      completed_at: row.completed_at,
+    };
   });
 }
 
-/* ══════════════════════════════════════════════════════════════
-   #6 MODULE PROGRESSION LOGIC
-   ─────────────────────────────────────────────────────────────
-   • Module 0 is always available
-   • Every other module requires the PREVIOUS module's assessment to be PASSED
-   • getModuleState() drives all lock/unlock decisions in the UI
-══════════════════════════════════════════════════════════════ */
-function getModuleState(module, moduleIndex) {
-  // First module always accessible
-  if (moduleIndex === 0) return computeModuleState(module);
+async function loadAssessmentResults() {
+  const { data, error } = await db
+    .from('assessment_results')
+    .select('*')
+    .eq('user_id', currentUser.id);
 
-  // ── #6: Previous module must be PASSED to unlock this one ──
-  const prevModule     = trackData.modules[moduleIndex - 1];
-  const prevAssessment = prevModule.assessments?.[0];
-  if (!prevAssessment) return 'locked';
+  if (error) { console.error('loadAssessmentResults error:', error.message); return; }
 
-  const prevPassed = (assessmentResults[prevAssessment.id] || [])
-    .some(r => r.score >= prevModule.passing_score);
-
-  if (!prevPassed) return 'locked';  // ← Module progression gate
-
-  return computeModuleState(module);
+  assessmentResults = {};
+  (data || []).forEach(r => {
+    if (!assessmentResults[r.assessment_id]) assessmentResults[r.assessment_id] = [];
+    assessmentResults[r.assessment_id].unshift(r);
+  });
 }
 
-function computeModuleState(module) {
-  const lessons    = module.lessons || [];
-  const assessment = module.assessments?.[0];
-  const allDone    = lessons.length > 0 && lessons.every(l => lessonProgress[l.id]);
-  const passed     = assessment &&
-    (assessmentResults[assessment.id] || []).some(r => r.score >= module.passing_score);
-
-  if (passed)  return 'completed';
-  if (allDone) return 'assessment';   // All lessons done → assessment ready
-  return 'in_progress';
-}
-
-// #5: Assessment only available when ALL lessons in the module are done
-function isAssessmentUnlocked(module) {
-  return module.lessons.every(l => lessonProgress[l.id] === true);
-}
-
-// Sequential lesson unlock: each lesson requires the previous to be completed
-function isLessonUnlocked(lesson, lessonIndex, module, moduleIndex) {
-  if (getModuleState(module, moduleIndex) === 'locked') return false;
-  if (lessonIndex === 0) return true;
-  return lessonProgress[module.lessons[lessonIndex - 1].id] === true;
+async function loadUserProgress() {
+  const { data } = await db
+    .from('progress')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .single();
+  userProgress = data;
 }
 
 /* ══════════════════════════════════════════════════════════════
-   RENDER — ROADMAP VIEW
+   ROADMAP RENDERING
+   #6 Module Progression — locks / unlocks based on lesson_progress
 ══════════════════════════════════════════════════════════════ */
 function renderRoadmap() {
   if (!trackData) return;
   const container = document.getElementById('modules-list');
   container.innerHTML = '';
   trackData.modules.forEach((module, i) => {
-    container.appendChild(buildModuleCard(module, i, getModuleState(module, i)));
+    container.appendChild(buildModuleCard(module, i));
   });
-  updateProgressStats();
 }
 
-function buildModuleCard(module, moduleIndex, state) {
+/* ── Module state helpers ─────────────────────────────────────── */
+function getModuleState(module, moduleIndex) {
   const lessons    = module.lessons || [];
-  const assessment = module.assessments?.[0];
-  const doneCount  = lessons.filter(l => lessonProgress[l.id]).length;
-  const pct        = lessons.length > 0 ? Math.round((doneCount / lessons.length) * 100) : 0;
+  const assessment = Array.isArray(module.assessments) ? module.assessments[0] : module.assessments;
+  const passed     = assessment &&
+    (assessmentResults[assessment.id] || []).some(r => r.score >= module.passing_score);
+
+  if (passed) return 'completed';
+
+  const allLessonsDone = lessons.length > 0 &&
+    lessons.every(l => lessonProgress[l.id]?.is_completed === true);
+  if (allLessonsDone) return 'assessment';
+
+  const anyUnlocked = lessons.some(l => lessonProgress[l.id]?.is_unlocked === true);
+  if (anyUnlocked) return 'current';
+
+  return 'locked';
+}
+
+function isAssessmentUnlocked(module) {
+  const lessons = module.lessons || [];
+  return lessons.length > 0 && lessons.every(l => lessonProgress[l.id]?.is_completed === true);
+}
+
+// A lesson is unlocked when lesson_progress.is_unlocked === true (set by DB trigger)
+function isLessonUnlocked(lesson) {
+  return lessonProgress[lesson.id]?.is_unlocked === true;
+}
+
+function buildModuleCard(module, moduleIndex) {
+  const state    = getModuleState(module, moduleIndex);
+  const lessons  = module.lessons || [];
+  const assessment = Array.isArray(module.assessments) ? module.assessments[0] : module.assessments;
+
+  const doneLessons = lessons.filter(l => lessonProgress[l.id]?.is_completed).length;
+  const pct         = lessons.length > 0 ? Math.round((doneLessons / lessons.length) * 100) : 0;
 
   const cfg = {
-    locked:      { badge: 'badge-locked',     label: '🔒 Locked'     },
-    in_progress: { badge: 'badge-current',    label: '⚡ In Progress' },
-    assessment:  { badge: 'badge-assessment', label: '📝 Assessment!' },
-    completed:   { badge: 'badge-completed',  label: '✓ Completed'    },
+    locked:     { badge: 'badge-locked',     label: '🔒 Locked'     },
+    current:    { badge: 'badge-current',    label: '⚡ In Progress' },
+    assessment: { badge: 'badge-assessment', label: '📝 Assessment'  },
+    completed:  { badge: 'badge-completed',  label: '✓ Completed'   },
   }[state];
 
   const card = document.createElement('div');
-  card.className = ['module-card',
-    state === 'locked'      ? 'locked'    : '',
-    state === 'completed'   ? 'completed' : '',
-    state === 'in_progress' ? 'current'   : '',
-  ].filter(Boolean).join(' ');
-  card.id = `module-${module.id}`;
+  card.className = `module-card ${state}`;
+  card.id        = `module-${module.id}`;
 
   card.innerHTML = `
     <div class="module-header" onclick="toggleModule('${module.id}')">
-      <div class="module-num">${state === 'completed' ? '✓' : moduleIndex + 1}</div>
+      <div class="module-num">${state === 'completed' ? '✓' : state === 'locked' ? '🔒' : moduleIndex + 1}</div>
       <div class="module-info">
         <div class="module-title">${esc(module.title)}</div>
         <div class="module-desc">${esc(module.description || '')}</div>
@@ -396,8 +301,9 @@ function buildModuleCard(module, moduleIndex, state) {
 }
 
 function buildLessonItem(lesson, lessonIndex, module, moduleIndex) {
-  const done      = lessonProgress[lesson.id] === true;
-  const unlocked  = isLessonUnlocked(lesson, lessonIndex, module, moduleIndex);
+  const lp        = lessonProgress[lesson.id] || {};
+  const done      = lp.is_completed === true;
+  const unlocked  = lp.is_unlocked === true;
   const isCurrent = unlocked && !done;
 
   const cls = ['lesson-item',
@@ -407,7 +313,7 @@ function buildLessonItem(lesson, lessonIndex, module, moduleIndex) {
   ].filter(Boolean).join(' ');
 
   const onclick = unlocked
-    ? `onclick="openLesson('${lesson.id}','${esc(lesson.title)}','${module.id}')"` : '';
+    ? `onclick="openLesson(${lesson.id},'${esc(lesson.title)}',${module.id})"` : '';
 
   return `
     <div class="${cls}" ${onclick}>
@@ -417,35 +323,30 @@ function buildLessonItem(lesson, lessonIndex, module, moduleIndex) {
     </div>`;
 }
 
-// #5: Assessment row — locked button if lessons not all done
 function buildAssessmentRow(assessment, module, moduleState) {
-  const results   = assessmentResults[assessment.id] || [];
-  const bestScore = results.length > 0 ? Math.max(...results.map(r => r.score)) : null;
-  const passed    = results.some(r => r.score >= module.passing_score);
+  const results     = assessmentResults[assessment.id] || [];
+  const bestScore   = results.length > 0 ? Math.max(...results.map(r => r.score)) : null;
+  const passed      = results.some(r => r.score >= module.passing_score);
   const allLessonsDone = isAssessmentUnlocked(module);
 
   let btn;
   if (!allLessonsDone) {
     btn = `<button class="btn btn-ghost btn-sm" disabled style="opacity:.4;cursor:not-allowed">
-             Complete all lessons first
-           </button>`;
+             Complete all lessons first</button>`;
   } else if (passed) {
-    btn = `<button class="btn btn-ghost btn-sm" onclick="openAssessment('${assessment.id}','${module.id}')">
-             🔄 Retake
-           </button>`;
+    btn = `<button class="btn btn-success btn-sm" disabled>✓ Passed</button>`;
   } else {
-    btn = `<button class="btn btn-primary btn-sm" onclick="openAssessment('${assessment.id}','${module.id}')">
-             📝 Take Assessment
-           </button>`;
+    btn = `<button class="btn btn-primary btn-sm" onclick="openAssessment(${assessment.id}, ${module.id})">
+             ${results.length > 0 ? 'Retry Assessment' : 'Start Assessment'}</button>`;
   }
 
   const scoreTag = bestScore !== null
-    ? `<span class="history-badge ${passed ? 'badge-pass' : 'badge-fail'}">Best: ${bestScore}%</span>` : '';
+    ? `<span style="color:${bestScore >= module.passing_score ? 'var(--success)' : 'var(--danger)'};margin-left:4px">· Best: ${bestScore}%</span>` : '';
 
   return `
     <div class="assessment-row">
       <div class="assessment-row-left">
-        <span class="assessment-row-icon">${passed ? '🏆' : '📝'}</span>
+        <span class="assessment-row-icon">📝</span>
         <div>
           <div class="assessment-row-title">${esc(assessment.title)}</div>
           <div class="assessment-row-sub">Pass mark: ${module.passing_score}%&nbsp;${scoreTag}</div>
@@ -455,44 +356,34 @@ function buildAssessmentRow(assessment, module, moduleState) {
     </div>`;
 }
 
-/* ── Helpers ────────────────────────────────────────────────── */
+/* ── Helpers ─────────────────────────────────────────────────── */
 window.toggleModule = function(moduleId) {
   document.getElementById(`module-${moduleId}`).classList.toggle('open');
 };
 
 window.showView = function(view) {
-  document.querySelectorAll('.view').forEach(v  => v.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => {
+    v.classList.remove('active');
+    v.classList.add('hidden');
+  });
+  const el = document.getElementById(`view-${view}`);
+  if (el) { el.classList.remove('hidden'); el.classList.add('active'); }
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(`view-${view}`).classList.add('active');
-  document.getElementById(`nav-${view}`).classList.add('active');
+  const navEl = document.getElementById(`nav-${view}`);
+  if (navEl) navEl.classList.add('active');
   if (view === 'progress') renderProgressView();
 };
 
 /* ══════════════════════════════════════════════════════════════
    LESSON MODAL
 ══════════════════════════════════════════════════════════════ */
-const LESSON_CONTENT = {
-  'les-001-1': `<h4>What is Artificial Intelligence?</h4><p>AI refers to the simulation of human intelligence in machines programmed to think and learn. It encompasses a wide range of capabilities including problem solving, language understanding, pattern recognition, and decision making.</p><br/><p><strong>Key branches of AI:</strong></p><ul style="margin:.5rem 0 0 1.2rem;color:#94a3b8;"><li>Machine Learning</li><li>Natural Language Processing</li><li>Computer Vision</li><li>Robotics</li></ul>`,
-  'les-001-2': `<h4>History of AI</h4><p>The field was formally founded in 1956 at the Dartmouth Conference by John McCarthy. The decades since have seen "AI winters" of reduced funding and "AI springs" of renewed interest, culminating in today's deep learning revolution.</p><br/><p><strong>Key milestones:</strong> 1956 Dartmouth Conference → 1997 Deep Blue beats Kasparov → 2012 AlexNet → 2022 ChatGPT.</p>`,
-  'les-001-3': `<h4>Types of AI Systems</h4><p><strong>Narrow AI (ANI):</strong> Designed for a specific task (e.g., facial recognition, chess engines). All current AI systems fall here.</p><br/><p><strong>General AI (AGI):</strong> Hypothetical — can perform any intellectual task a human can.</p><br/><p><strong>Super AI (ASI):</strong> Hypothetical — surpasses human intelligence in all domains.</p>`,
-  'les-002-1': `<h4>Supervised Learning</h4><p>The model learns from labeled training data — input-output pairs. During training it adjusts weights to minimize prediction error.</p><br/><p><strong>Examples:</strong> Email spam detection, image classification, house price prediction.</p><br/><p><strong>Common algorithms:</strong> Linear Regression, Logistic Regression, Decision Trees, SVM, Neural Networks.</p>`,
-  'les-002-2': `<h4>Unsupervised Learning</h4><p>The model learns patterns from unlabeled data. It finds hidden structure without explicit guidance.</p><br/><p><strong>Examples:</strong> Customer segmentation, anomaly detection, topic modeling.</p><br/><p><strong>Common algorithms:</strong> K-Means clustering, DBSCAN, PCA, Autoencoders.</p>`,
-  'les-002-3': `<h4>Model Evaluation</h4><p>After training, we measure how well a model generalizes to unseen data.</p><br/><p><strong>Classification metrics:</strong> Accuracy, Precision, Recall, F1 Score, ROC-AUC.</p><br/><p><strong>Regression metrics:</strong> MAE, MSE, RMSE, R².</p><br/><p><strong>Key concept:</strong> Avoid overfitting (too specific to training data) and underfitting (too simple).</p>`,
-  'les-003-1': `<h4>Perceptrons & Neurons</h4><p>A perceptron is the simplest neural network unit, inspired by biological neurons. It takes weighted inputs, sums them, applies a threshold, and produces an output (0 or 1).</p><br/><p><strong>Formula:</strong> output = activation(Σ(wᵢxᵢ) + bias)</p>`,
-  'les-003-2': `<h4>Deep Learning Layers</h4><p>Deep neural networks stack multiple layers: an input layer, hidden layers, and an output layer. Each layer learns progressively more abstract representations of the data.</p><br/><p><strong>Layer types:</strong> Dense (fully connected), Convolutional (images), Recurrent (sequences), Attention (transformers).</p>`,
-  'les-003-3': `<h4>Backpropagation</h4><p>The algorithm that trains neural networks. It computes the gradient of the loss function with respect to each weight using the chain rule, then updates weights via gradient descent.</p><br/><p><strong>Steps:</strong> Forward pass → compute loss → backward pass (compute gradients) → update weights.</p>`,
-  'les-004-1': `<h4>Anatomy of a Prompt</h4><p>A well-structured prompt typically has: <strong>System prompt</strong> (sets behavior), <strong>Context</strong> (background info), <strong>Instruction</strong> (what to do), and <strong>Examples</strong> (optional).</p><br/><p>The clearer your instruction, the more reliable and accurate the LLM's output will be.</p>`,
-  'les-004-2': `<h4>Chain-of-Thought Prompting</h4><p>Encourages the model to reason step-by-step before giving a final answer. Simply adding "Let's think step by step" to a prompt can dramatically improve accuracy on complex reasoning tasks.</p><br/><p><strong>Example:</strong> "If John has 3 apples and gives 1 to Mary, how many does he have? Let's think step by step."</p>`,
-  'les-004-3': `<h4>Few-Shot Prompting</h4><p>You provide a few input-output examples in the prompt to show the model the expected format and reasoning pattern. The model then follows that pattern for new inputs.</p><br/><p><strong>Zero-shot:</strong> No examples. <strong>One-shot:</strong> 1 example. <strong>Few-shot:</strong> 2-5 examples.</p>`,
-};
-
 window.openLesson = function(lessonId, title, moduleId) {
   currentLessonId = lessonId;
   document.getElementById('lesson-modal-title').textContent = title;
   document.getElementById('lesson-modal-content').innerHTML =
-    LESSON_CONTENT[lessonId] || '<p>Lesson content loads here. Read through carefully, then mark as complete.</p>';
+    LESSON_CONTENT[title] || '<p>Read through this lesson carefully, then mark it as complete to unlock the next one.</p>';
 
-  const done = lessonProgress[lessonId] === true;
+  const done = lessonProgress[lessonId]?.is_completed === true;
   const btn  = document.getElementById('mark-complete-btn');
   btn.textContent = done ? '✓ Already Completed' : '✓ Mark as Complete';
   btn.disabled    = done;
@@ -506,7 +397,7 @@ window.closeLessonModal = function() {
   currentLessonId = null;
 };
 
-// ── #4 Progress Tracking: save lesson completion ─────────────
+// #4 Progress Tracking: save lesson completion
 window.markLessonComplete = async function() {
   if (!currentLessonId) return;
 
@@ -514,50 +405,41 @@ window.markLessonComplete = async function() {
   btn.disabled = true;
   btn.innerHTML = '<div class="btn-spinner"></div>';
 
-  if (!isDemoMode) {
-    const { error } = await db.from('lesson_progress').upsert({
-      user_id:      currentUser.id,
-      lesson_id:    currentLessonId,
-      completed:    true,
-      completed_at: new Date().toISOString()
-    }, { onConflict: 'user_id,lesson_id' });
+  // Update lesson_progress — Trigger C will auto-unlock the next lesson
+  const { error } = await db
+    .from('lesson_progress')
+    .update({ is_completed: true })
+    .eq('user_id', currentUser.id)
+    .eq('lesson_id', currentLessonId);
 
-    if (error) {
-      showToast('Error saving: ' + error.message, 'error');
-      btn.disabled = false; btn.innerHTML = '✓ Mark as Complete';
-      return;
-    }
+  if (error) {
+    showToast('Error saving: ' + error.message, 'error');
+    btn.disabled = false; btn.innerHTML = '✓ Mark as Complete';
+    return;
   }
 
-  // ── #4: Update in-memory lesson progress ──
-  lessonProgress[currentLessonId] = true;
+  // Reload lesson_progress so the new unlock from Trigger C is reflected
+  await loadLessonProgress();
+
   showToast('Lesson completed! 🎉', 'success');
   closeLessonModal();
-
-  // ── #4: Auto-update all progress stats ──
   updateProgressStats();
   renderRoadmap();
 };
 
 /* ══════════════════════════════════════════════════════════════
    #5 MODULE ASSESSMENT AUTOMATION
-   ─────────────────────────────────────────────────────────────
-   • Assessment unlocks only after ALL lessons are done
-   • Configurable passing score per module
-   • Retry logic: every attempt stored, unlimited retries
-   • Instant per-question feedback
 ══════════════════════════════════════════════════════════════ */
 window.openAssessment = function(assessmentId, moduleId) {
   const module = trackData.modules.find(m => m.id === moduleId);
   if (!module) return;
 
-  // #5: Guard — only open if all lessons are done
   if (!isAssessmentUnlocked(module)) {
     showToast('Complete all lessons first!', 'error');
     return;
   }
 
-  const assessment = module.assessments?.[0];
+  const assessment = Array.isArray(module.assessments) ? module.assessments[0] : module.assessments;
   if (!assessment) return;
 
   currentAssessment  = assessment;
@@ -579,7 +461,7 @@ window.openAssessment = function(assessmentId, moduleId) {
 window.closeAssessmentModal = function() {
   document.getElementById('assessment-modal').classList.add('hidden');
   currentAssessment = null;
-  renderRoadmap();           // #6: refresh roadmap after assessment
+  renderRoadmap();
   renderProgressView();
 };
 
@@ -630,7 +512,6 @@ window.nextQuestion = async function() {
   }
 };
 
-// #5: Retry logic — reset and start over, attempt_number increments
 window.retryAssessment = function() {
   currentQuestionIdx = 0;
   userAnswers = {};
@@ -648,38 +529,36 @@ async function submitAssessment() {
   const score    = Math.round((correct / total) * 100);
   const module   = trackData.modules.find(m => m.id === currentModuleId);
   const passMark = module?.passing_score ?? 70;
-  const passed   = score >= passMark;  // #5: configurable pass mark
+  const passed   = score >= passMark;
 
-  // #5: Retry logic — track attempt number
   const prevResults   = assessmentResults[currentAssessment.id] || [];
   const attemptNumber = prevResults.length + 1;
 
   const result = {
-    id:             'res-' + Date.now(),
     user_id:        currentUser.id,
     assessment_id:  currentAssessment.id,
     score, passed,
     attempt_number: attemptNumber,
-    submitted_at:   new Date().toISOString()
+    submitted_at:   new Date().toISOString(),
   };
 
-  // Save to DB in live mode
-  if (!isDemoMode) {
-    const { data: saved, error } = await db.from('assessment_results').insert({
-      user_id: currentUser.id, assessment_id: currentAssessment.id,
-      score, passed, attempt_number: attemptNumber
-    }).select().single();
-    if (error) { showToast('Error saving: ' + error.message, 'error'); return; }
-    Object.assign(result, saved);
-  }
+  // Save to Supabase
+  const { data: saved, error } = await db
+    .from('assessment_results')
+    .insert(result)
+    .select()
+    .single();
 
-  // Store in memory
+  if (error) { showToast('Error saving: ' + error.message, 'error'); return; }
+  Object.assign(result, saved);
+
   if (!assessmentResults[currentAssessment.id]) assessmentResults[currentAssessment.id] = [];
   assessmentResults[currentAssessment.id].unshift(result);
 
-  // #4: Update aggregate progress stats after assessment
-  updateProgressStats();
+  // Reload lesson_progress so the new unlock from Trigger D is reflected
+  await loadLessonProgress();
 
+  updateProgressStats();
   showResult(score, correct, total, passMark, passed);
 }
 
@@ -687,47 +566,39 @@ function showResult(score, correct, total, passMark, passed) {
   document.getElementById('quiz-view').style.display = 'none';
   document.getElementById('result-view').classList.remove('hidden');
 
-  document.getElementById('result-circle').className = `result-circle ${passed ? 'pass' : 'fail'}`;
-  document.getElementById('result-score').textContent     = score + '%';
-  document.getElementById('result-heading').textContent   = passed ? '🎉 You passed!' : '😔 Not quite';
-  document.getElementById('result-message').textContent   = passed
-    ? 'Excellent! The next module is now unlocked. Keep going!'
+  document.getElementById('result-circle').className   = `result-circle ${passed ? 'pass' : 'fail'}`;
+  document.getElementById('result-score').textContent   = score + '%';
+  document.getElementById('result-heading').textContent = passed ? '🎉 You passed!' : '😔 Not quite';
+  document.getElementById('result-message').textContent = passed
+    ? 'Excellent work! Keep going on your learning path.'
     : `You scored ${score}%. You need ${passMark}% to pass. Review the lessons and retry!`;
   document.getElementById('result-correct').textContent   = correct;
   document.getElementById('result-total').textContent     = total;
   document.getElementById('result-pass-mark').textContent = passMark + '%';
 
-  // #6: Show unlock badge if passed (next module will be unlocked)
   document.getElementById('result-next-module').classList.toggle('hidden', !passed);
   document.getElementById('retry-btn').style.display = passed ? 'none' : '';
 }
 
 /* ══════════════════════════════════════════════════════════════
    #4 PROGRESS TRACKING SYSTEM
-   ─────────────────────────────────────────────────────────────
-   Auto-updates after every action:
-   • lessons_completed, modules_completed
-   • completion_percent
-   • learning_streak
-   • current_status
-   Persists to user_progress in Supabase (live mode).
 ══════════════════════════════════════════════════════════════ */
 function updateProgressStats() {
   if (!trackData) return;
 
   const allLessons       = trackData.modules.flatMap(m => m.lessons || []);
-  const lessonsCompleted = allLessons.filter(l => lessonProgress[l.id]).length;
+  const lessonsCompleted = allLessons.filter(l => lessonProgress[l.id]?.is_completed).length;
   const modulesCompleted = trackData.modules.filter(m => {
-    const a = m.assessments?.[0];
+    const a = Array.isArray(m.assessments) ? m.assessments[0] : m.assessments;
     return a && (assessmentResults[a.id] || []).some(r => r.score >= m.passing_score);
   }).length;
   const totalLessons  = allLessons.length;
   const completionPct = totalLessons > 0
     ? parseFloat(((lessonsCompleted / totalLessons) * 100).toFixed(1)) : 0;
 
-  // Streak: increments each new day, resets if a day is skipped
+  // Streak logic
   const today      = new Date().toISOString().split('T')[0];
-  let   streak     = userProgress?.learning_streak ?? 0;
+  let   streak     = userProgress?.streak ?? 0;
   const lastActive = userProgress?.last_active_date;
   if (!lastActive) {
     streak = 1;
@@ -738,40 +609,40 @@ function updateProgressStats() {
     streak = lastActive === yd ? streak + 1 : 1;
   }
 
-  const status = modulesCompleted === trackData.modules.length ? 'completed' : 'in_progress';
   const payload = {
-    user_id: currentUser.id,  track_id: DEFAULT_TRACK_ID,
-    lessons_completed: lessonsCompleted, modules_completed: modulesCompleted,
-    completion_percent: completionPct,  learning_streak: streak,
-    last_active_date: today,           current_status: status,
-    updated_at: new Date().toISOString()
+    user_id:          currentUser.id,
+    lessons_completed: lessonsCompleted,
+    modules_completed: modulesCompleted,
+    percentage:        completionPct,
+    streak,
+    last_active_date:  today,
+    updated_at:        new Date().toISOString(),
   };
 
-  // Update in-memory progress
   userProgress = { ...(userProgress || {}), ...payload };
 
-  // Persist to Supabase (live mode only)
-  if (!isDemoMode) {
-    db.from('user_progress').upsert(payload, { onConflict: 'user_id' }).then(() => {});
-  }
+  // Persist to Supabase
+  db.from('progress').upsert(payload, { onConflict: 'user_id' }).then(() => {});
 
-  // ── Refresh all stats in the UI ──
   refreshStatsUI(lessonsCompleted, modulesCompleted, completionPct, streak);
 }
 
 function refreshStatsUI(lessonsDone, modsDone, pct, streak) {
-  // Roadmap header stats
-  document.getElementById('overall-percent').textContent = pct + '%';
-  document.getElementById('overall-bar').style.width     = pct + '%';
-  document.getElementById('stat-lessons').textContent    = `${lessonsDone} lesson${lessonsDone !== 1 ? 's' : ''} done`;
-  document.getElementById('stat-modules').textContent    = `${modsDone} module${modsDone !== 1 ? 's' : ''} done`;
-  document.getElementById('streak-count').textContent    = streak;
+  safeSet('overall-percent', pct + '%');
+  const bar = document.getElementById('overall-bar');
+  if (bar) bar.style.width = pct + '%';
+  safeSet('stat-lessons', `${lessonsDone} lesson${lessonsDone !== 1 ? 's' : ''} done`);
+  safeSet('stat-modules', `${modsDone} module${modsDone !== 1 ? 's' : ''} done`);
+  safeSet('streak-count', streak);
+  safeSet('pg-lessons', lessonsDone);
+  safeSet('pg-modules', modsDone);
+  safeSet('pg-percent', pct + '%');
+  safeSet('pg-streak',  streak);
+}
 
-  // Progress view stats
-  document.getElementById('pg-lessons').textContent = lessonsDone;
-  document.getElementById('pg-modules').textContent = modsDone;
-  document.getElementById('pg-percent').textContent = pct + '%';
-  document.getElementById('pg-streak').textContent  = streak;
+function safeSet(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -780,19 +651,20 @@ function refreshStatsUI(lessonsDone, modsDone, pct, streak) {
 function renderProgressView() {
   if (!trackData) return;
 
-  // Update stats
   updateProgressStats();
 
   // Module breakdown bars
   const bl = document.getElementById('module-breakdown-list');
+  if (!bl) return;
   bl.innerHTML = '';
   trackData.modules.forEach((module, i) => {
     const lessons     = module.lessons || [];
-    const lessonsDone = lessons.filter(l => lessonProgress[l.id]).length;
+    const lessonsDone = lessons.filter(l => lessonProgress[l.id]?.is_completed).length;
     const modPct      = lessons.length > 0 ? Math.round((lessonsDone / lessons.length) * 100) : 0;
     const state       = getModuleState(module, i);
-    const passed      = module.assessments?.[0] &&
-      (assessmentResults[module.assessments[0].id] || []).some(r => r.score >= module.passing_score);
+    const a       = Array.isArray(module.assessments) ? module.assessments[0] : module.assessments;
+    const passed      = a &&
+      (assessmentResults[a.id] || []).some(r => r.score >= module.passing_score);
 
     const stateIcon = state === 'locked' ? '🔒' : passed ? '🏆' : state === 'assessment' ? '📝' : '⚡';
 
@@ -806,9 +678,10 @@ function renderProgressView() {
 
   // Assessment history
   const historyList = document.getElementById('assessment-history');
-  const allResults  = [];
+  if (!historyList) return;
+  const allResults = [];
   trackData.modules.forEach(m => {
-    const a = m.assessments?.[0];
+    const a = Array.isArray(m.assessments) ? m.assessments[0] : m.assessments;
     if (!a) return;
     (assessmentResults[a.id] || []).forEach(r =>
       allResults.push({ ...r, moduleName: m.title, passMark: m.passing_score })
@@ -837,6 +710,7 @@ function renderProgressView() {
 let toastTimer;
 function showToast(msg, type = 'default') {
   const t = document.getElementById('toast');
+  if (!t) return;
   t.textContent = msg;
   t.className   = `toast ${type}`;
   t.classList.remove('hidden');

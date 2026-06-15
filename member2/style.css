@@ -5,37 +5,39 @@
 
 /* ── Design Tokens ─────────────────────────────────────────── */
 :root {
-  --bg-base:        #09090f;
-  --bg-card:        #111118;
-  --bg-card-hover:  #16161f;
-  --bg-surface:     #1a1a26;
-  --bg-surface2:    #20202e;
+  --bg-base:        #0A0A0F;
+  --bg-card:        #15151C;
+  --bg-card-hover:  #1E1E29;
+  --bg-surface:     #15151C;
+  --bg-surface2:    #1E1E29;
 
-  --border:         rgba(255,255,255,0.07);
-  --border-strong:  rgba(255,255,255,0.13);
+  --border:         #2A2A38;
+  --border-strong:  #1F1F2A;
 
-  --primary:        #7c3aed;
-  --primary-light:  #9d6af5;
-  --primary-glow:   rgba(124,58,237,0.35);
+  --primary:        #8B5CF6;
+  --primary-light:  #B794F6;
+  --primary-glow:   rgba(139, 92, 246, 0.35);
   --secondary:      #06b6d4;
   --accent:         #f59e0b;
   --success:        #10b981;
   --danger:         #ef4444;
   --warning:        #f59e0b;
 
-  --text:           #f1f5f9;
-  --text-muted:     #94a3b8;
-  --text-dim:       #475569;
+  --text:           #F5F4FA;
+  --text-muted:     #8E8EA3;
+  --text-dim:       #5C5C70;
 
   --radius-sm:      8px;
   --radius:         14px;
-  --radius-lg:      20px;
+  --radius-lg:      22px;
   --radius-xl:      28px;
 
-  --shadow:         0 4px 24px rgba(0,0,0,0.4);
-  --shadow-lg:      0 12px 48px rgba(0,0,0,0.6);
-  --shadow-primary: 0 0 32px rgba(124,58,237,0.25);
+  --shadow:         0 8px 24px -8px var(--primary-glow);
+  --shadow-lg:      0 24px 64px rgba(0,0,0,0.7);
+  --shadow-primary: 0 0 32px var(--primary-glow);
 
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
   --transition:     0.2s cubic-bezier(0.4,0,0.2,1);
 }
 
@@ -45,13 +47,20 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg-base);
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, #3F2A78 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(139,92,246,0.12) 0%, transparent 55%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
+
+h1, h2, h3, h4 { font-family: var(--font-display); }
 
 /* ── Screens ────────────────────────────────────────────────── */
 .screen { min-height: 100vh; }

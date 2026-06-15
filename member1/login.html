@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduFlick AI — Sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="wordmark">
+        <span class="wordmark__mark">EF</span>
+        EduFlick <span class="wordmark__ai">AI</span>
+      </div>
+    </header>
+  </div>
+
+  <main class="auth-wrap">
+    <div>
+      <!-- Onboarding pathway preview -->
+      <div class="stepper">
+        <div class="stepper__node stepper__node--active">
+          <div class="stepper__circle">1</div>
+          <div class="stepper__label">Account</div>
+        </div>
+        <div class="stepper__connector"></div>
+        <div class="stepper__node">
+          <div class="stepper__circle">2</div>
+          <div class="stepper__label">Track</div>
+        </div>
+        <div class="stepper__connector"></div>
+        <div class="stepper__node">
+          <div class="stepper__circle">3</div>
+          <div class="stepper__label">Mentor</div>
+        </div>
+      </div>
+
+      <div class="card auth-card">
+        <div class="auth-card__heading">
+          <h1>Start your AI learning path</h1>
+          <p>Sign in or create an account to pick your track and mentor.</p>
+        </div>
+
+        <div class="tabs">
+          <button class="tab tab--active" id="tab-login" type="button">Log in</button>
+          <button class="tab" id="tab-register" type="button">Create account</button>
+        </div>
+
+        <!-- Login form -->
+        <form id="login-form">
+          <div class="field">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn btn--primary btn--block">Log in</button>
+        </form>
+
+        <!-- Register form -->
+        <form id="register-form" hidden>
+          <div class="field">
+            <label for="register-name">Full name</label>
+            <input type="text" id="register-name" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="register-email">Email</label>
+            <input type="email" id="register-email" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" required minlength="6" autocomplete="new-password" />
+          </div>
+          <button type="submit" class="btn btn--primary btn--block">Create account</button>
+        </form>
+
+        <div class="form-message" id="form-message"></div>
+      </div>
+      <p class="center-note">Step 1 of 3 — pick your track and mentor next.</p>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
