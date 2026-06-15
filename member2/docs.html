@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>EduFlick AI — Member 2 Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg:      #09090f;
+      --card:    #111118;
+      --surface: #1a1a26;
+      --border:  rgba(255,255,255,0.08);
+      --primary: #7c3aed;
+      --cyan:    #06b6d4;
+      --green:   #10b981;
+      --amber:   #f59e0b;
+      --text:    #f1f5f9;
+      --muted:   #94a3b8;
+      --dim:     #475569;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    /* ── Header ── */
+    .hero {
+      background: linear-gradient(135deg, rgba(124,58,237,.15) 0%, rgba(6,182,212,.08) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(124,58,237,.2), transparent 60%),
+                  radial-gradient(ellipse at 70% 50%, rgba(6,182,212,.15), transparent 60%);
+      pointer-events:none;
+    }
+    .hero-badge {
+      display:inline-flex;align-items:center;gap:8px;
+      padding:.35rem 1rem;
+      background:rgba(124,58,237,.15);
+      border:1px solid rgba(124,58,237,.3);
+      border-radius:99px;font-size:.78rem;font-weight:600;
+      color:#c4b5fd;margin-bottom:1.2rem;
+    }
+    .hero h1 {
+      font-family:'Outfit',sans-serif;font-size:clamp(2rem,5vw,3rem);
+      font-weight:800;letter-spacing:-.03em;margin-bottom:.6rem;
+    }
+    .hero h1 span { background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .hero-sub { color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 2rem; }
+    .badge-row { display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem; }
+    .badge {
+      padding:.3rem .9rem;border-radius:99px;font-size:.78rem;font-weight:600;
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--muted);
+    }
+    .badge.done { background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.3);color:#6ee7b7; }
+
+    /* ── Nav ── */
+    nav.sticky {
+      position:sticky;top:0;z-index:100;
+      background:rgba(9,9,15,.9);backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      padding:.75rem 2rem;
+      display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;
+    }
+    nav a {
+      padding:.4rem .9rem;border-radius:8px;
+      font-size:.82rem;font-weight:500;color:var(--muted);
+      text-decoration:none;transition:.2s;
+    }
+    nav a:hover { background:var(--surface);color:var(--text); }
+
+    /* ── Layout ── */
+    .container { max-width:1100px;margin:0 auto;padding:3rem 2rem; }
+    .section { margin-bottom:4rem; }
+    .section-title {
+      font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;
+      margin-bottom:.4rem;display:flex;align-items:center;gap:.7rem;
+    }
+    .section-title .num {
+      width:32px;height:32px;border-radius:8px;
+      background:linear-gradient(135deg,var(--primary),#9d6af5);
+      display:grid;place-items:center;font-size:.82rem;font-weight:700;color:#fff;flex-shrink:0;
+    }
+    .section-sub { color:var(--muted);font-size:.9rem;margin-bottom:1.75rem; }
+
+    /* ── Cards ── */
+    .card {
+      background:var(--card);border:1px solid var(--border);
+      border-radius:18px;padding:1.75rem;margin-bottom:1.25rem;
+    }
+    .card h3 { font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text); }
+
+    /* ── Tables ── */
+    table { width:100%;border-collapse:collapse;font-size:.85rem; }
+    th { background:var(--surface);padding:.6rem 1rem;text-align:left;font-weight:600;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em; }
+    td { padding:.65rem 1rem;border-top:1px solid var(--border);color:var(--text); }
+    tr:hover td { background:rgba(255,255,255,.02); }
+    .tag {
+      display:inline-block;padding:.15rem .5rem;border-radius:5px;
+      font-size:.72rem;font-weight:600;font-family:'Fira Code',monospace;
+    }
+    .tag-pk { background:rgba(245,158,11,.15);color:#fbbf24; }
+    .tag-fk { background:rgba(6,182,212,.15);color:#67e8f9; }
+    .tag-rls{ background:rgba(124,58,237,.15);color:#c4b5fd; }
+    .tag-ok { background:rgba(16,185,129,.15);color:#6ee7b7; }
+
+    /* ── Mermaid diagrams ── */
+    .mermaid-wrap {
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:14px;padding:1.5rem;overflow-x:auto;
+      margin-bottom:1.25rem;
+    }
+    .mermaid { min-width:500px; }
+
+    /* ── Logic blocks ── */
+    .logic-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem; }
+    .logic-block {
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:12px;padding:1.25rem;
+    }
+    .logic-block h4 { font-size:.85rem;font-weight:700;margin-bottom:.75rem;color:var(--primary); }
+    .logic-block pre {
+      font-family:'Fira Code',monospace;font-size:.75rem;
+      color:#cbd5e1;line-height:1.6;white-space:pre-wrap;
+    }
+
+    /* ── Trigger table ── */
+    .trigger-row { display:flex;align-items:flex-start;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--border); }
+    .trigger-row:last-child { border-bottom:none; }
+    .trigger-action {
+      min-width:220px;padding:.4rem .75rem;
+      background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);
+      border-radius:8px;font-size:.8rem;font-weight:600;color:#c4b5fd;flex-shrink:0;
+    }
+    .trigger-arrow { color:var(--dim);align-self:center;flex-shrink:0; }
+    .trigger-results { display:flex;flex-direction:column;gap:.35rem; }
+    .trigger-result {
+      display:inline-flex;align-items:center;gap:.4rem;
+      font-size:.78rem;color:var(--muted);
+    }
+    .trigger-result::before { content:'→';color:var(--green); }
+
+    /* ── Req checklist ── */
+    .req-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem; }
+    .req-card {
+      background:var(--surface);border:1px solid rgba(16,185,129,.2);
+      border-radius:14px;padding:1.25rem;
+    }
+    .req-num { font-size:.72rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem; }
+    .req-title { font-weight:700;font-size:.9rem;margin-bottom:.5rem; }
+    .req-items { display:flex;flex-direction:column;gap:.35rem; }
+    .req-item { display:flex;align-items:flex-start;gap:.6rem;font-size:.8rem;color:var(--muted); }
+    .req-item::before { content:'✓';color:var(--green);font-weight:700;flex-shrink:0;margin-top:1px; }
+
+    /* ── Footer ── */
+    footer { text-align:center;padding:2rem;border-top:1px solid var(--border);color:var(--dim);font-size:.8rem; }
+
+    @media(max-width:640px){
+      .container{padding:2rem 1rem;}
+      .trigger-row{flex-direction:column;}
+      .trigger-action{min-width:unset;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-badge">M2 · Member 2 · Progress & Assessments</div>
+  <h1>EduFlick <span>AI LMS</span></h1>
+  <p class="hero-sub">Complete documentation — Progress Tracking, Module Assessment Automation & Module Progression Logic</p>
+  <div class="badge-row">
+    <span class="badge done">✓ #4 Progress Tracking</span>
+    <span class="badge done">✓ #5 Assessment Automation</span>
+    <span class="badge done">✓ #6 Module Progression</span>
+    <span class="badge done">✓ Working Prototype</span>
+    <span class="badge done">✓ Database Schema</span>
+    <span class="badge done">✓ Automation Logic</span>
+    <span class="badge done">✓ Workflow Diagram</span>
+    <span class="badge done">✓ System Architecture</span>
+  </div>
+</div>
+
+<!-- ── STICKY NAV ── -->
+<nav class="sticky">
+  <a href="#req">Requirements</a>
+  <a href="#erd">Database ERD</a>
+  <a href="#automation">Automation Logic</a>
+  <a href="#workflow">Workflow</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#files">Files</a>
+</nav>
+
+<div class="container">
+
+  <!-- ══ REQUIREMENTS ══ -->
+  <section class="section" id="req">
+    <div class="section-title"><span class="num">1</span> Requirements Coverage</div>
+    <p class="section-sub">All 3 Member 2 requirements fully implemented and verified.</p>
+
+    <div class="req-grid">
+      <div class="req-card">
+        <div class="req-num">#4 — Progress Tracking System</div>
+        <div class="req-title">Auto-update progress statistics</div>
+        <div class="req-items">
+          <div class="req-item">Lessons completed count auto-updates</div>
+          <div class="req-item">Modules completed count auto-updates</div>
+          <div class="req-item">% completion recalculated after every action</div>
+          <div class="req-item">Learning streak (daily, resets on miss)</div>
+          <div class="req-item">Current status: in_progress / completed</div>
+        </div>
+      </div>
+      <div class="req-card">
+        <div class="req-num">#5 — Module Assessment Automation</div>
+        <div class="req-title">Smart quiz unlock & grading</div>
+        <div class="req-items">
+          <div class="req-item">Assessment button hidden until all lessons done</div>
+          <div class="req-item">Each module has its own configurable passing score</div>
+          <div class="req-item">Every attempt stored with attempt_number</div>
+          <div class="req-item">Retry button shown on fail, unlimited retries</div>
+          <div class="req-item">Instant per-question correct/wrong feedback</div>
+        </div>
+      </div>
+      <div class="req-card">
+        <div class="req-num">#6 — Module Progression Logic</div>
+        <div class="req-title">Sequential module unlocking</div>
+        <div class="req-items">
+          <div class="req-item">Passing assessment unlocks next module instantly</div>
+          <div class="req-item">Roadmap re-renders with new unlock state</div>
+          <div class="req-item">Progress stats updated immediately</div>
+          <div class="req-item">Visual "Next module unlocked!" confirmation</div>
+          <div class="req-item">Module states: locked / in_progress / assessment / completed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ERD ══ -->
+  <section class="section" id="erd">
+    <div class="section-title"><span class="num">2</span> Database Schema (ERD)</div>
+    <p class="section-sub">8 tables covering content structure, user activity, and aggregate progress. All user data is protected by Row Level Security.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+erDiagram
+    TRACKS {
+        uuid id PK
+        text title
+        text category
+    }
+    MODULES {
+        uuid id PK
+        uuid track_id FK
+        text title
+        int order_index
+        int passing_score
+    }
+    LESSONS {
+        uuid id PK
+        uuid module_id FK
+        text title
+        int order_index
+    }
+    ASSESSMENTS {
+        uuid id PK
+        uuid module_id FK
+        text title
+    }
+    ASSESSMENT_QUESTIONS {
+        uuid id PK
+        uuid assessment_id FK
+        text question_text
+        jsonb options
+        text correct_option
+    }
+    LESSON_PROGRESS {
+        uuid id PK
+        uuid user_id
+        uuid lesson_id FK
+        bool completed
+        timestamptz completed_at
+    }
+    ASSESSMENT_RESULTS {
+        uuid id PK
+        uuid user_id
+        uuid assessment_id FK
+        int score
+        bool passed
+        int attempt_number
+    }
+    USER_PROGRESS {
+        uuid id PK
+        uuid user_id
+        int lessons_completed
+        int modules_completed
+        numeric completion_percent
+        int learning_streak
+        text current_status
+    }
+    TRACKS ||--o{ MODULES : "has"
+    MODULES ||--o{ LESSONS : "contains"
+    MODULES ||--|| ASSESSMENTS : "has one"
+    ASSESSMENTS ||--o{ ASSESSMENT_QUESTIONS : "has"
+    LESSONS ||--o{ LESSON_PROGRESS : "tracked by"
+    ASSESSMENTS ||--o{ ASSESSMENT_RESULTS : "attempted in"
+    TRACKS ||--o{ USER_PROGRESS : "aggregated in"
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Table Summary</h3>
+      <table>
+        <tr><th>Table</th><th>Purpose</th><th>Key Constraint</th><th>Security</th></tr>
+        <tr><td><code>tracks</code></td><td>Learning tracks (AI Foundations etc.)</td><td>–</td><td><span class="tag tag-ok">Public read</span></td></tr>
+        <tr><td><code>modules</code></td><td>Ordered modules per track</td><td><code>order_index</code>, <code>passing_score</code></td><td><span class="tag tag-ok">Public read</span></td></tr>
+        <tr><td><code>lessons</code></td><td>Lessons per module</td><td><code>order_index</code></td><td><span class="tag tag-ok">Public read</span></td></tr>
+        <tr><td><code>assessments</code></td><td>One quiz per module</td><td><code>module_id UNIQUE</code></td><td><span class="tag tag-ok">Public read</span></td></tr>
+        <tr><td><code>assessment_questions</code></td><td>MCQ questions (JSONB options)</td><td><code>correct_option</code></td><td><span class="tag tag-ok">Public read</span></td></tr>
+        <tr><td><code>lesson_progress</code></td><td>User lesson completions</td><td><code>UNIQUE(user_id, lesson_id)</code></td><td><span class="tag tag-rls">RLS</span></td></tr>
+        <tr><td><code>assessment_results</code></td><td>Every quiz attempt + score</td><td><code>attempt_number</code></td><td><span class="tag tag-rls">RLS</span></td></tr>
+        <tr><td><code>user_progress</code></td><td>Aggregate stats per user</td><td><code>UNIQUE(user_id)</code></td><td><span class="tag tag-rls">RLS</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Configurable Passing Scores (per module)</h3>
+      <table>
+        <tr><th>Module</th><th>Order</th><th>Pass Mark</th></tr>
+        <tr><td>Introduction to AI</td><td>1</td><td><b>70%</b></td></tr>
+        <tr><td>Machine Learning Basics</td><td>2</td><td><b>75%</b></td></tr>
+        <tr><td>Neural Networks</td><td>3</td><td><b>80%</b></td></tr>
+        <tr><td>Prompt Engineering</td><td>4</td><td><b>70%</b></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ AUTOMATION ══ -->
+  <section class="section" id="automation">
+    <div class="section-title"><span class="num">3</span> Automation Logic</div>
+    <p class="section-sub">Every user action triggers a cascade of automatic updates — no manual intervention needed.</p>
+
+    <div class="card">
+      <h3>Trigger → Response Map</h3>
+
+      <div class="trigger-row">
+        <div class="trigger-action">👆 Click "Mark Lesson Complete"</div>
+        <div class="trigger-arrow">→</div>
+        <div class="trigger-results">
+          <div class="trigger-result">UPSERT lesson_progress (completed = true)</div>
+          <div class="trigger-result">Next lesson unlocks automatically in UI</div>
+          <div class="trigger-result">IF all lessons done → assessment button activates</div>
+          <div class="trigger-result">user_progress recalculated and saved</div>
+          <div class="trigger-result">Progress bar + streak updated live</div>
+        </div>
+      </div>
+
+      <div class="trigger-row">
+        <div class="trigger-action">📝 Click "Take Assessment"</div>
+        <div class="trigger-arrow">→</div>
+        <div class="trigger-results">
+          <div class="trigger-result">Only available if all lessons in module are done</div>
+          <div class="trigger-result">Questions loaded from assessment_questions</div>
+          <div class="trigger-result">Instant per-question correct/wrong feedback</div>
+        </div>
+      </div>
+
+      <div class="trigger-row">
+        <div class="trigger-action">✅ Submit Quiz (PASS)</div>
+        <div class="trigger-arrow">→</div>
+        <div class="trigger-results">
+          <div class="trigger-result">assessment_results row inserted (passed = true)</div>
+          <div class="trigger-result">Next module unlocks immediately in roadmap</div>
+          <div class="trigger-result">modules_completed++ in user_progress</div>
+          <div class="trigger-result">completion_percent recalculated</div>
+          <div class="trigger-result">"Next module unlocked!" badge shown</div>
+        </div>
+      </div>
+
+      <div class="trigger-row">
+        <div class="trigger-action">❌ Submit Quiz (FAIL)</div>
+        <div class="trigger-arrow">→</div>
+        <div class="trigger-results">
+          <div class="trigger-result">assessment_results row inserted (passed = false)</div>
+          <div class="trigger-result">attempt_number incremented for next try</div>
+          <div class="trigger-result">Score + feedback message shown</div>
+          <div class="trigger-result">Retry button shown — unlimited attempts</div>
+          <div class="trigger-result">Next module stays locked</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="logic-grid">
+      <div class="logic-block">
+        <h4>Lesson Sequential Unlock</h4>
+        <pre>isLessonUnlocked(lesson, index, module):
+  if module.state === 'locked'
+    return FALSE
+
+  if index === 0
+    return TRUE  // first lesson always open
+
+  prev = module.lessons[index - 1]
+  return lessonProgress[prev.id] === true</pre>
+      </div>
+
+      <div class="logic-block">
+        <h4>Assessment Unlock</h4>
+        <pre>assessmentAvailable(module):
+  lessons = module.lessons
+  return lessons.length > 0
+    && lessons.every(l =>
+         lessonProgress[l.id] === true
+       )</pre>
+      </div>
+
+      <div class="logic-block">
+        <h4>Module Progression</h4>
+        <pre>getModuleState(module, index):
+  if index === 0
+    → computeModuleState(module)
+
+  prev = modules[index - 1]
+  prevResults = assessmentResults[
+    prev.assessment.id
+  ]
+  prevPassed = prevResults.some(r =>
+    r.score >= prev.passing_score
+  )
+
+  if NOT prevPassed → "locked"
+  else → computeModuleState(module)</pre>
+      </div>
+
+      <div class="logic-block">
+        <h4>Progress & Streak</h4>
+        <pre>updateProgressStats():
+  lessonsDone = count where
+    lessonProgress[id] === true
+
+  modulesDone = count where any
+    result.score >= passing_score
+
+  pct = (lessonsDone / total) * 100
+
+  // Streak logic:
+  if today == lastActiveDate → no change
+  elif today == yesterday+1  → streak + 1
+  else                       → streak = 1
+
+  UPSERT user_progress</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ WORKFLOW ══ -->
+  <section class="section" id="workflow">
+    <div class="section-title"><span class="num">4</span> Workflow Diagram</div>
+    <p class="section-sub">End-to-end student journey through the Member 2 system — from arriving at the dashboard to completing the full track.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+flowchart TD
+    A([Student arrives\nfrom Login Page]) --> B[Load Roadmap]
+    B --> C{Valid session?}
+    C -- No --> Z([Redirect to Login])
+    C -- Yes --> D[Fetch all data\nfrom Supabase]
+    D --> E[Render Roadmap\nwith module states]
+
+    E --> F{Module State?}
+    F -- locked --> G[🔒 Locked\nComplete previous first]
+    F -- in_progress --> H[First lesson unlocked]
+    F -- assessment --> I[All lessons done\nAssessment ready 📝]
+    F -- completed --> J[✓ Done — next unlocked]
+
+    H --> K[Student opens lesson]
+    K --> L[Read content]
+    L --> M[Mark as Complete]
+    M --> N[(UPSERT\nlesson_progress)]
+    N --> O[(UPSERT\nuser_progress)]
+    O --> P{All lessons\ndone?}
+    P -- No --> H
+    P -- Yes --> I
+
+    I --> Q[Take Assessment]
+    Q --> R[Answer MCQ questions\nInstant feedback]
+    R --> S[Submit]
+    S --> T[(INSERT\nassessment_results)]
+    T --> V{score >=\npassing_score?}
+
+    V -- FAIL --> W[Show score\nRetry button]
+    W --> Q
+
+    V -- PASS --> X[🎉 Passed!]
+    X --> Y[(UPSERT\nuser_progress)]
+    Y --> E
+
+    style A fill:#1a1a26,stroke:#7c3aed,color:#f1f5f9
+    style Z fill:#1a1a26,stroke:#ef4444,color:#f1f5f9
+    style G fill:#1a1a26,stroke:#475569,color:#94a3b8
+    style J fill:#1a1a26,stroke:#10b981,color:#6ee7b7
+    style X fill:#1a1a26,stroke:#10b981,color:#6ee7b7
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ARCHITECTURE ══ -->
+  <section class="section" id="architecture">
+    <div class="section-title"><span class="num">5</span> System Architecture</div>
+    <p class="section-sub">Lightweight client-side app backed by Supabase — no backend server required.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph LR
+    subgraph Client["🌐 Browser"]
+        HTML[index.html]
+        CSS[style.css]
+        JS[app.js]
+        CFG[config.js]
+    end
+
+    subgraph Supabase["☁️ Supabase"]
+        AUTH[Auth]
+        DB[(PostgreSQL)]
+        RLS[Row Level\nSecurity]
+    end
+
+    subgraph Public["📖 Public Tables"]
+        T[tracks]
+        M[modules]
+        L[lessons]
+        A[assessments]
+        Q[questions]
+    end
+
+    subgraph Private["🔒 User Tables RLS"]
+        LP[lesson_progress]
+        AR[assessment_results]
+        UP[user_progress]
+    end
+
+    JS -->|getSession| AUTH
+    JS -->|SELECT| Public
+    JS -->|UPSERT / INSERT| Private
+    RLS -->|auth.uid = user_id| Private
+    DB --> Public
+    DB --> Private
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Data Flow Summary</h3>
+      <table>
+        <tr><th>Event</th><th>Browser Action</th><th>Supabase Operation</th></tr>
+        <tr><td>Page load</td><td>Check auth session</td><td><code>auth.getSession()</code></td></tr>
+        <tr><td>Page load</td><td>Load content</td><td><code>SELECT</code> tracks, modules, lessons (public)</td></tr>
+        <tr><td>Page load</td><td>Load user data</td><td><code>SELECT</code> lesson_progress, results, user_progress (RLS)</td></tr>
+        <tr><td>Lesson done</td><td>Save completion</td><td><code>UPSERT</code> lesson_progress</td></tr>
+        <tr><td>Lesson done</td><td>Update stats</td><td><code>UPSERT</code> user_progress</td></tr>
+        <tr><td>Quiz submit</td><td>Save attempt</td><td><code>INSERT</code> assessment_results</td></tr>
+        <tr><td>Quiz submit</td><td>Update stats</td><td><code>UPSERT</code> user_progress</td></tr>
+        <tr><td>Sign out</td><td>Clear session</td><td><code>auth.signOut()</code></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ FILES ══ -->
+  <section class="section" id="files">
+    <div class="section-title"><span class="num">6</span> File Structure</div>
+    <p class="section-sub">All Member 2 deliverables in the <code>member2/</code> folder.</p>
+
+    <div class="card">
+      <table>
+        <tr><th>File</th><th>Purpose</th><th>Size</th></tr>
+        <tr><td><code>member2/index.html</code></td><td>Main app — roadmap + progress + modals</td><td>~9 KB</td></tr>
+        <tr><td><code>member2/style.css</code></td><td>Complete dark design system</td><td>~26 KB</td></tr>
+        <tr><td><code>member2/app.js</code></td><td>All logic: progress, assessments, progression</td><td>~29 KB</td></tr>
+        <tr><td><code>member2/config.js</code></td><td>Supabase project URL + anon key</td><td>&lt;1 KB</td></tr>
+        <tr><td><code>member2/schema.sql</code></td><td>Full DB schema + RLS + seed data (4 modules, 12 lessons, 20 questions)</td><td>~15 KB</td></tr>
+        <tr><td><code>member2/README.md</code></td><td>Full documentation with ERD, workflow, architecture</td><td>~8 KB</td></tr>
+        <tr><td><code>member2/docs.html</code></td><td>This visual documentation page</td><td>~18 KB</td></tr>
+        <tr><td><code>index.html</code></td><td>One-click demo login page</td><td>~6 KB</td></tr>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  EduFlick AI LMS · Member 2 — Progress &amp; Assessments ·
+  Built with HTML + Vanilla JS + Supabase
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      background: '#1a1a26',
+      primaryColor: '#7c3aed',
+      primaryTextColor: '#f1f5f9',
+      primaryBorderColor: '#9d6af5',
+      lineColor:  '#475569',
+      secondaryColor: '#111118',
+      tertiaryColor:  '#20202e',
+      edgeLabelBackground: '#1a1a26',
+      clusterBkg: '#111118',
+      titleColor: '#f1f5f9',
+      nodeBorder: '#9d6af5',
+    },
+    flowchart: { curve: 'basis', htmlLabels: true }
+  });
+</script>
+</body>
+</html>

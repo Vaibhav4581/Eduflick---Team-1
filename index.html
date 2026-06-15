@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>EduFlick AI — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#09090f;color:#f1f5f9;min-height:100vh;
+      display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+
+    .orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;}
+    .o1{width:600px;height:600px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(124,58,237,.5),transparent);animation:drift 10s ease-in-out infinite;}
+    .o2{width:500px;height:500px;bottom:-150px;right:-150px;background:radial-gradient(circle,rgba(6,182,212,.4),transparent);animation:drift 12s ease-in-out infinite reverse;}
+    .o3{width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(245,158,11,.2),transparent);animation:drift 8s ease-in-out infinite 2s;}
+    @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-30px) scale(1.08)}}
+    .o3{animation-name:driftc}
+    @keyframes driftc{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(calc(-50% + 20px),calc(-50% - 20px)) scale(1.1)}}
+
+    .card{
+      position:relative;z-index:1;
+      background:rgba(15,15,22,.8);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:28px;
+      padding:3rem 2.5rem;
+      width:100%;max-width:420px;margin:1.5rem;
+      backdrop-filter:blur(24px);
+      box-shadow:0 24px 64px rgba(0,0,0,.7),0 0 0 1px rgba(124,58,237,.1),0 0 40px rgba(124,58,237,.15);
+      animation:fadeUp .5s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:2rem;}
+    .brand-icon{
+      width:46px;height:46px;
+      background:linear-gradient(135deg,#7c3aed,#9d6af5);
+      border-radius:12px;display:grid;place-items:center;font-size:1.4rem;
+      box-shadow:0 4px 16px rgba(124,58,237,.5);
+    }
+    .brand-name{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.5rem;letter-spacing:-.02em;}
+    .brand-ai{color:#9d6af5;}
+
+    h1{font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;line-height:1.15;margin-bottom:.5rem;}
+    h1 span{background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sub{color:#64748b;font-size:.9rem;margin-bottom:2.5rem;line-height:1.5;}
+
+    .features{display:flex;flex-direction:column;gap:.7rem;margin-bottom:2.5rem;}
+    .feat{display:flex;align-items:center;gap:.75rem;font-size:.85rem;color:#94a3b8;}
+    .feat-icon{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;font-size:.9rem;}
+    .feat-icon.purple{background:rgba(124,58,237,.15);}
+    .feat-icon.cyan  {background:rgba(6,182,212,.15);}
+    .feat-icon.amber {background:rgba(245,158,11,.15);}
+
+    .btn-enter{
+      width:100%;padding:.9rem;
+      background:linear-gradient(135deg,#7c3aed,#9d6af5);
+      border:none;border-radius:12px;
+      color:#fff;font-family:inherit;font-size:1rem;font-weight:700;
+      cursor:pointer;
+      box-shadow:0 6px 24px rgba(124,58,237,.4);
+      transition:transform .2s,box-shadow .2s;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      letter-spacing:.01em;
+    }
+    .btn-enter:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(124,58,237,.55);}
+    .btn-enter:active{transform:translateY(0);}
+
+    .arrow{font-size:1.1rem;transition:transform .2s;}
+    .btn-enter:hover .arrow{transform:translateX(4px);}
+
+    .divider{text-align:center;color:#334155;font-size:.75rem;margin:1.25rem 0;position:relative;}
+    .divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:rgba(255,255,255,.06);}
+    .divider::before{left:0} .divider::after{right:0}
+
+    .note{text-align:center;font-size:.75rem;color:#334155;}
+    .note a{color:#7c3aed;text-decoration:none;} .note a:hover{text-decoration:underline;}
+  </style>
+</head>
+<body>
+
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="orb o3"></div>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <span class="brand-name">EduFlick <span class="brand-ai">AI</span></span>
+  </div>
+
+  <h1>Learn AI.<br/><span>At your pace.</span></h1>
+  <p class="sub">Your AI-powered learning journey — track progress, complete modules, and earn your way to the next level.</p>
+
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon purple">🗺️</div>
+      <span>Structured roadmap with sequential module unlocking</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon cyan">📝</div>
+      <span>Auto-graded assessments with configurable pass marks</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon amber">📊</div>
+      <span>Real-time progress tracking & learning streak</span>
+    </div>
+  </div>
+
+  <button class="btn-enter" onclick="enter()">
+    Enter Dashboard <span class="arrow">→</span>
+  </button>
+
+  <div class="divider">EduFlick AI LMS · Member 2 Demo</div>
+  <p class="note">Progress tracking · Module assessment · Module progression</p>
+</div>
+
+<script>
+  function enter() {
+    // Set a dummy session flag so the dashboard doesn't redirect back
+    sessionStorage.setItem('ef_demo_user', JSON.stringify({
+      id:    'demo-user-001',
+      email: 'demo@eduflick.ai',
+      user_metadata: { full_name: 'Demo Student' }
+    }));
+    window.location.href = 'member2/index.html';
+  }
+</script>
+
+</body>
+</html>
