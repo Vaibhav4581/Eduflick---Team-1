@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduFlick AI — Choose your track</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="wordmark">
+        <span class="wordmark__mark">EF</span>
+        EduFlick <span class="wordmark__ai">AI</span>
+      </div>
+      <div class="topbar__meta">
+        <button class="btn btn--ghost" onclick="logout()">Log out</button>
+      </div>
+    </header>
+
+    <!-- Onboarding pathway preview -->
+    <div class="stepper">
+      <div class="stepper__node stepper__node--done">
+        <div class="stepper__circle">✓</div>
+        <div class="stepper__label">Account</div>
+      </div>
+      <div class="stepper__connector stepper__connector--done"></div>
+      <div class="stepper__node stepper__node--active">
+        <div class="stepper__circle">2</div>
+        <div class="stepper__label">Track</div>
+      </div>
+      <div class="stepper__connector"></div>
+      <div class="stepper__node">
+        <div class="stepper__circle">3</div>
+        <div class="stepper__label">Mentor</div>
+      </div>
+    </div>
+
+    <div class="page-head">
+      <h1>Choose your learning track</h1>
+      <p>This becomes your active learning path — your roadmap, lessons, and mentor match are all built around it.</p>
+    </div>
+
+    <div id="tracks-container">
+      <div class="loading-state">Loading tracks…</div>
+    </div>
+
+    <div class="actions-bar">
+      <button class="btn btn--primary" id="continue-btn" disabled>Continue to mentor selection</button>
+    </div>
+    <div class="form-message" id="form-message"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/track-selection.js"></script>
+</body>
+</html>

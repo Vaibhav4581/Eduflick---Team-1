@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduFlick AI — Mentor Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css" />
+<link rel="stylesheet" href="/member3/style.css?v=2" />
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="ti ti-school"></i></div>
+      <div>
+        <div class="logo-text">EduFlick AI</div>
+        <div class="logo-sub">Mentor Portal</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section">Overview</div>
+      <div class="nav-item active" onclick="showPage('dashboard', this)">
+        <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
+      </div>
+      <div class="nav-section">Students</div>
+      <div class="nav-item" onclick="showPage('students', this)">
+        <i class="ti ti-users"></i><span>My Students</span>
+      </div>
+      <div class="nav-item" onclick="showPage('submissions', this)">
+        <i class="ti ti-folder-open"></i><span>Submissions</span>
+      </div>
+      <div class="nav-section">Account</div>
+      <div class="nav-item" onclick="logout()">
+        <i class="ti ti-logout"></i><span>Log out</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="mentor-avatar">AM</div>
+      <div>
+        <div class="mentor-name">Arjun Mehta</div>
+        <div class="mentor-role">Senior Mentor</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+
+    <!-- ════ DASHBOARD ════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1 id="greeting-name">Good morning, Mentor 👋</h1>
+        <p>Here's a snapshot of your cohort's progress today.</p>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-icon" style="color:var(--blue)"><i class="ti ti-users"></i></div>
+          <div class="metric-label">Assigned students</div>
+          <div class="metric-value">0</div>
+          <div class="metric-sub">Agentic Automation track</div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon" style="color:var(--amber)"><i class="ti ti-clock-exclamation"></i></div>
+          <div class="metric-label">Pending reviews</div>
+          <div class="metric-value" style="color:var(--amber)">0</div>
+          <div class="metric-sub">Awaiting your feedback</div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon" style="color:var(--blue)"><i class="ti ti-chart-line"></i></div>
+          <div class="metric-label">Avg. cohort progress</div>
+          <div class="metric-value">0%</div>
+          <div class="metric-sub">Across all students</div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon" style="color:var(--green)"><i class="ti ti-certificate"></i></div>
+          <div class="metric-label">Completions this month</div>
+          <div class="metric-value" style="color:var(--green)">0</div>
+          <div class="metric-sub">Certificates issued</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent activity</span>
+            <span class="card-sub">Last 48 hours</span>
+          </div>
+          <div class="timeline" id="recent-activity-list">
+            <p style="padding: 1rem; color: var(--text-secondary); font-size: 13px;">No recent activity.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Needs attention</span></div>
+          <div id="needs-attention-list">
+             <p style="padding: 1rem; color: var(--text-secondary); font-size: 13px;">All caught up!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ STUDENTS ════ -->
+    <div class="page" id="page-students">
+      <div id="students-list-view">
+        <div class="page-header">
+          <h1>My students</h1>
+          <p>8 learners assigned across 4 learning tracks</p>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Track</th>
+                  <th>Progress</th>
+                  <th>Modules</th>
+                  <th>Assessment avg</th>
+                  <th>Last active</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="student-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT DETAIL -->
+      <div id="student-detail" class="detail-view">
+        <button class="back-btn" onclick="backToStudents()"><i class="ti ti-arrow-left"></i> Back to students</button>
+        <div class="student-header">
+          <div class="avatar avatar-lg" id="det-avatar"></div>
+          <div class="student-header-info">
+            <h2 id="det-name"></h2>
+            <p id="det-track"></p>
+          </div>
+          <div id="det-status-badge"></div>
+        </div>
+        <div id="det-cert-banner"></div>
+        <div class="score-grid">
+          <div class="score-card"><div class="val" id="det-progress"></div><div class="lbl">Overall progress</div></div>
+          <div class="score-card"><div class="val" id="det-lessons"></div><div class="lbl">Lessons completed</div></div>
+          <div class="score-card"><div class="val" id="det-modules-done"></div><div class="lbl">Modules passed</div></div>
+          <div class="score-card"><div class="val" id="det-streak"></div><div class="lbl">Learning streak</div></div>
+          <div class="score-card"><div class="val" id="det-avg-score"></div><div class="lbl">Avg. assessment score</div></div>
+          <div class="score-card"><div class="val" id="det-subs"></div><div class="lbl">Projects submitted</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Module & assessment breakdown</span></div>
+          <div id="det-module-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SUBMISSIONS ════ -->
+    <div class="page" id="page-submissions">
+      <div class="page-header">
+        <h1>Project submissions</h1>
+        <p>Review GitHub links, portfolio URLs, and project files — then provide structured feedback.</p>
+      </div>
+      <div class="tabs">
+        <div class="tab active" onclick="filterSubs('pending', this)">Pending</div>
+        <div class="tab" onclick="filterSubs('reviewed', this)">Reviewed</div>
+        <div class="tab" onclick="filterSubs('all', this)">All</div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="sub-table">
+            <thead>
+              <tr>
+                <th>Project / student</th>
+                <th>Submitted links & files</th>
+                <th>Module</th>
+                <th>Submitted</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="submissions-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- ════ REVIEW MODAL ════ -->
+<div class="modal-overlay" id="review-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-title">Review submission</h2>
+        <div class="msub" id="modal-sub"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Overall verdict</label>
+        <select id="fb-verdict">
+          <option value="">Select verdict...</option>
+          <option value="approved">✓ Approved — ready to advance</option>
+          <option value="revision">↩ Needs revision — specific changes required</option>
+          <option value="rejected">✗ Rejected — does not meet requirements</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Score criteria</label>
+        <div class="criteria-grid">
+          <div class="criteria-card">
+            <div class="criteria-label">Code quality & structure</div>
+            <div class="stars" id="stars-code"></div>
+          </div>
+          <div class="criteria-card">
+            <div class="criteria-label">Problem solving approach</div>
+            <div class="stars" id="stars-problem"></div>
+          </div>
+          <div class="criteria-card">
+            <div class="criteria-label">Documentation & readability</div>
+            <div class="stars" id="stars-doc"></div>
+          </div>
+          <div class="criteria-card">
+            <div class="criteria-label">Creativity & innovation</div>
+            <div class="stars" id="stars-creativity"></div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>What went well</label>
+        <textarea id="fb-strengths" placeholder="List specific strengths you observed in this submission..."></textarea>
+      </div>
+      <div class="field">
+        <label>Areas to improve</label>
+        <textarea id="fb-improve" placeholder="Concrete gaps and what the student should work on..."></textarea>
+      </div>
+      <div class="field">
+        <label>Action items for student</label>
+        <textarea id="fb-actions" placeholder="3–5 specific next steps, e.g. 'Refactor the auth module to use JWT instead of sessions'..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitFeedback()"><i class="ti ti-check"></i> Submit feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="ti ti-circle-check"></i> <span id="toast-msg">Done!</span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL     = 'https://hoqzqlamzspiagjrrswg.supabase.co';
+  const SUPABASE_ANON_KEY= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcXpxbGFtenNwaWFnanJyc3dnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDM3MDYsImV4cCI6MjA5Nzg3OTcwNn0.FlfmPzq0uesABOHNPLOzz4ldj28DUFowAySwbWrsFng';
+</script>
+<script src="/member3/script.js?v=2"></script>
+</body>
+</html>

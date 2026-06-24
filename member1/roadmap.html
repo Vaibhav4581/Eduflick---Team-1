@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduFlick AI — Your roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="wordmark">
+        <span class="wordmark__mark">EF</span>
+        EduFlick <span class="wordmark__ai">AI</span>
+      </div>
+      <div class="topbar__meta">
+        <span class="pill pill--violet" id="track-pill">Loading…</span>
+        <button class="btn btn--ghost" onclick="logout()">Log out</button>
+      </div>
+    </header>
+
+    <div class="page-head">
+      <h1>Your learning roadmap</h1>
+      <p>Lessons unlock one at a time as you complete them, in order.</p>
+    </div>
+
+    <div class="progress-summary" id="progress-summary" hidden>
+      <div>
+        <div class="progress-summary__track" id="progress-track-label">Track</div>
+        <div class="progress-summary__bar">
+          <div class="progress-summary__fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="progress-summary__pct" id="progress-pct">0%</div>
+    </div>
+
+    <div id="pathway-container">
+      <div class="loading-state">Loading your roadmap…</div>
+    </div>
+  </div>
+
+  <!-- Lesson detail panel -->
+  <div class="overlay" id="overlay" hidden>
+    <div class="panel">
+      <div class="panel__eyebrow" id="panel-eyebrow">Module · Lesson</div>
+      <h2 id="panel-title">Lesson title</h2>
+      <p id="panel-body">Lesson description goes here.</p>
+      <div class="panel__actions">
+        <button class="btn btn--ghost" id="panel-close">Close</button>
+        <button class="btn btn--primary" id="panel-complete">Mark as complete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/roadmap.js"></script>
+</body>
+</html>

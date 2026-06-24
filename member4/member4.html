@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Completion</title>
+    <link rel="stylesheet" href="member4.css">
+</head>
+<body>
+    <section class="completion-section" id="course-completion">
+  <div class="completion-container">
+
+    <div class="completion-left">
+      <span class="section-badge">Member 4</span>
+      <h2>Course Completion & Certification</h2>
+      <p>
+        This section checks whether the learner has completed all modules and passed all assessments.
+        Once eligible, the system automatically marks the course as complete and generates a certificate.
+      </p>
+
+      <div class="student-card">
+        <h3>Learner Progress Summary</h3>
+
+        <div class="progress-info">
+          <p><strong>Student Name:</strong> <span id="studentName">Shreyaa P</span></p>
+          <p><strong>Selected Track:</strong> <span id="trackName">AI Foundations</span></p>
+          <p><strong>Modules Completed:</strong> <span id="modulesCompleted">4 / 4</span></p>
+          <p><strong>Assessment Status:</strong> <span id="assessmentStatus">Passed</span></p>
+          <p><strong>Course Status:</strong> <span id="courseStatus">Checking...</span></p>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <button id="generateBtn" onclick="generateCertificate()">
+          Generate Certificate
+        </button>
+      </div>
+    </div>
+
+    <div class="completion-right">
+      <div class="certificate-card" id="certificateCard">
+        <div class="certificate-header">
+          <h3>EduFlick AI</h3>
+          <p>Certificate of Completion</p>
+        </div>
+
+        <div class="certificate-body">
+          <p>This certificate is proudly presented to</p>
+          <h2 id="certStudentName">Student Name</h2>
+          <p>for successfully completing the</p>
+          <h3 id="certTrackName">Course Track</h3>
+          <p class="cert-message">
+            The learner has completed all modules, passed the assessments,
+            and fulfilled the course completion requirements.
+          </p>
+        </div>
+
+        <div class="certificate-footer">
+          <p>Issued by EduFlick AI LMS Automation Engine</p>
+          <p id="issueDate"></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+ <script src="member4.js"></script>
+</body>
+</html>
